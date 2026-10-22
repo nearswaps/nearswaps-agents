@@ -1,0 +1,199 @@
+{
+ "label": "sell 100 TEAR",
+ "recorded_at": "2026-10-22T13:20:15.455Z",
+ "source": "https://nearswaps.com/terminal, window.nekoSwap.oneClickIntear (the 1-click panel's own quote), read-only",
+ "inputs": {
+  "token_in": "token.intear.near",
+  "token_out": "wrap.near",
+  "amount_in": "100000000000000000000000000",
+  "venue": "intear"
+ },
+ "config": {
+  "trade_pools": [
+   3807,
+   4512,
+   6458,
+   5462,
+   6724,
+   79,
+   5469,
+   6065,
+   4525,
+   4771,
+   535,
+   4,
+   6679,
+   5650,
+   2,
+   852,
+   3,
+   3019,
+   6503,
+   1207,
+   4369,
+   6518,
+   3411,
+   4276,
+   3599,
+   5720,
+   5466,
+   974,
+   5649,
+   5494,
+   0,
+   4314,
+   5391,
+   4243,
+   6716,
+   6035,
+   5154,
+   5978,
+   3088,
+   5661,
+   8696,
+   3815,
+   5519,
+   5982,
+   5858,
+   5283,
+   4729,
+   6055,
+   377,
+   5980,
+   5728,
+   5502,
+   6618,
+   5754,
+   5741,
+   5778,
+   2799,
+   6690,
+   4547,
+   5977,
+   1371,
+   5473,
+   6613,
+   6594,
+   2448,
+   5634,
+   6591,
+   8842,
+   5740,
+   8700,
+   6775,
+   6657,
+   5576,
+   1,
+   3474,
+   5675,
+   5538,
+   4530,
+   276,
+   5222,
+   6431,
+   8664,
+   5566,
+   6672,
+   5730,
+   5579,
+   5583,
+   5753,
+   5630,
+   5574,
+   5631,
+   5936,
+   4656,
+   6045,
+   5761,
+   5726,
+   5975,
+   4840,
+   5767
+  ],
+  "open_pools": true,
+  "registered": [
+   "rhea|wrap.near",
+   "intear|near",
+   "intear|nep141:token.intear.near",
+   "dcl|wrap.near"
+  ],
+  "registered_total": 108,
+  "at_venue": true,
+  "enable_cost": [
+   [
+    "rhea",
+    "20000000000000000000000"
+   ],
+   [
+    "intear",
+    "20000000000000000000000"
+   ],
+   [
+    "dcl",
+    "30000000000000000000000"
+   ],
+   [
+    "shards",
+    "30000000000000000000000"
+   ]
+  ],
+  "token_open": false
+ },
+ "panel": {
+  "out": "472565945185438639067575",
+  "mid": null,
+  "venue": {
+   "Intear": {
+    "dex_id": "slimedragon.near/xyk",
+    "message": "AgAAAGAfDQACAAAAFgEAABYAAADgIgIAAwAAABoBAADJAAAAxwAAAAA="
+   }
+  },
+  "min_out_500": "448937647926166707114196",
+  "auto_slip_bps": 500,
+  "min_out_auto": "448937647926166707114196"
+ },
+ "pool_reads": [],
+ "pool_kinds": {},
+ "pools": {},
+ "calls": [
+  {
+   "kind": "http",
+   "url": "https://router.intear.tech/route?token_in=token.intear.near&token_out=near&amount_in=100000000000000000000000000&max_wait_ms=1500&slippage_type=Fixed&slippage=0.01&dexes=Plach&referrer_id=nekotesting.near&trader_account_id=nekoorders.near",
+   "body": [
+    {
+     "estimated_amount": {
+      "amount_out": "472565945185438639067575"
+     },
+     "worst_case_amount": {
+      "amount_out": "467840285733584252676898"
+     },
+     "dex_id": "Plach",
+     "execution_instructions": [
+      {
+       "NearTransaction": {
+        "receiver_id": "token.intear.near",
+        "actions": [
+         {
+          "FunctionCall": {
+           "method_name": "ft_transfer_call",
+           "args": "eyJyZWNlaXZlcl9pZCI6ImRleC5pbnRlYXIubmVhciIsImFtb3VudCI6IjEwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsIm1zZyI6IntcIm9wZXJhdGlvbnNcIjpbe1wiU3dhcFNpbXBsZVwiOntcImRleF9pZFwiOlwic2xpbWVkcmFnb24ubmVhci94eWtcIixcIm1lc3NhZ2VcIjpcIkFnQUFBR0FmRFFBQ0FBQUFGZ0VBQUJZQUFBRGdJZ0lBQXdBQUFCb0JBQURKQUFBQXh3QUFBQUE9XCIsXCJhc3NldF9pblwiOlwibmVwMTQxOnRva2VuLmludGVhci5uZWFyXCIsXCJhc3NldF9vdXRcIjpcIm5lYXJcIixcImFtb3VudFwiOntcIkFtb3VudFwiOntcIkV4YWN0SW5cIjpcIjEwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMFwifX0sXCJjb25zdHJhaW50XCI6XCI0Njc4NDAyODU3MzM1ODQyNTI2NzY4OThcIn19LHtcIldpdGhkcmF3XCI6e1wiYXNzZXRfaWRcIjpcIm5lYXJcIixcImFtb3VudFwiOntcIkZ1bGxcIjp7XCJhdF9sZWFzdFwiOlwiNDY3ODQwMjg1NzMzNTg0MjUyNjc2ODk4XCJ9fSxcInRvXCI6bnVsbCxcInJlc2N1ZV9hZGRyZXNzXCI6bnVsbH19XSxcInJlZmVycmVyXCI6XCJuZWtvdGVzdGluZy5uZWFyXCIsXCJyZWZlcnJhbF9mZWVzXCI6W119In0=",
+           "gas": 88000000000000,
+           "deposit": "1"
+          }
+         }
+        ],
+        "is_fee_transaction": false
+       }
+      }
+     ],
+     "needs_unwrap": false,
+     "token_output": "near",
+     "estimated_max_gas_cost": "8922696934308200000000",
+     "estimated_gas_usage": "3848015190558200000000",
+     "storage_deposits": "0",
+     "fee_amount": "0"
+    }
+   ]
+  }
+ ]
+}

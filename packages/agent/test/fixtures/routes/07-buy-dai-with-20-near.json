@@ -1,0 +1,1949 @@
+{
+ "label": "buy DAI with 20 NEAR",
+ "recorded_at": "2026-10-22T13:19:31.739Z",
+ "source": "https://nearswaps.com/terminal, window.nekoSwap.oneClickRoute (the 1-click panel's own quote), read-only",
+ "inputs": {
+  "token_in": "wrap.near",
+  "token_out": "6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near",
+  "amount_in": "20000000000000000000000000",
+  "venue": "rhea"
+ },
+ "config": {
+  "trade_pools": [
+   3807,
+   4512,
+   6458,
+   5462,
+   6724,
+   79,
+   5469,
+   6065,
+   4525,
+   4771,
+   535,
+   4,
+   6679,
+   5650,
+   2,
+   852,
+   3,
+   3019,
+   6503,
+   1207,
+   4369,
+   6518,
+   3411,
+   4276,
+   3599,
+   5720,
+   5466,
+   974,
+   5649,
+   5494,
+   0,
+   4314,
+   5391,
+   4243,
+   6716,
+   6035,
+   5154,
+   5978,
+   3088,
+   5661,
+   8696,
+   3815,
+   5519,
+   5982,
+   5858,
+   5283,
+   4729,
+   6055,
+   377,
+   5980,
+   5728,
+   5502,
+   6618,
+   5754,
+   5741,
+   5778,
+   2799,
+   6690,
+   4547,
+   5977,
+   1371,
+   5473,
+   6613,
+   6594,
+   2448,
+   5634,
+   6591,
+   8842,
+   5740,
+   8700,
+   6775,
+   6657,
+   5576,
+   1,
+   3474,
+   5675,
+   5538,
+   4530,
+   276,
+   5222,
+   6431,
+   8664,
+   5566,
+   6672,
+   5730,
+   5579,
+   5583,
+   5753,
+   5630,
+   5574,
+   5631,
+   5936,
+   4656,
+   6045,
+   5761,
+   5726,
+   5975,
+   4840,
+   5767
+  ],
+  "open_pools": true,
+  "registered": [
+   "rhea|wrap.near",
+   "rhea|ftv2.nekotoken.near",
+   "intear|near",
+   "rhea|17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+   "rhea|token.rhealab.near",
+   "rhea|chill-129.meme-cooking.near",
+   "rhea|npro.nearmobile.near",
+   "rhea|token.v2.ref-finance.near",
+   "rhea|aaaaaa20d9e0e2461697782ef11675f668207961.factory.bridge.near",
+   "rhea|zec.omft.near",
+   "rhea|853d955acef822db058eb8505911ed77f175b99e.factory.bridge.near",
+   "rhea|touched.tkn.near",
+   "rhea|meta-pool.near",
+   "rhea|dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near",
+   "rhea|itlx.intellex_xyz.near",
+   "rhea|purge-558.meme-cooking.near",
+   "rhea|6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near",
+   "rhea|52a047ee205701895ee06a375492490ec9c597ce.factory.bridge.near",
+   "rhea|a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near",
+   "rhea|sol.token.a11bd.near",
+   "rhea|token.publicailab.near",
+   "rhea|aurora",
+   "rhea|token.0xshitzu.near",
+   "rhea|jambo-1679.meme-cooking.near",
+   "rhea|gear.enleap.near",
+   "rhea|blackdragon.tkn.near",
+   "rhea|apys.token.a11bd.near",
+   "rhea|abg-966.meme-cooking.near",
+   "rhea|neardog-0.meme-cooking.near",
+   "rhea|2260fac5e5542a773aa44fbcfedf7c193bc2c599.factory.bridge.near",
+   "rhea|ribbit-426.meme-cooking.near",
+   "rhea|4illia-222.meme-cooking.near",
+   "rhea|token.skyward.near",
+   "rhea|token.lonkingnearbackto2024.near",
+   "rhea|kat.token0.near",
+   "rhea|neat.nrc-20.near",
+   "rhea|cfi.consumer-fi.near",
+   "rhea|pepear.aidols.near",
+   "rhea|wbnb.hot.tg",
+   "rhea|score.aidols.near",
+   "rhea|linear-protocol.near",
+   "rhea|cooked-612.meme-cooking.near",
+   "rhea|l000000.factory.shardsmarket.near",
+   "rhea|e99de844ef3ef72806cf006224ef3b813e82662f.factory.bridge.near",
+   "rhea|hijack-252.meme-cooking.near",
+   "rhea|img_8327-1591.meme-cooking.near",
+   "rhea|dogshit-1408.meme-cooking.near",
+   "rhea|cz.token0.near",
+   "rhea|22.contract.portalbridge.near",
+   "rhea|xpost-1634.meme-cooking.near",
+   "rhea|token.paras.near",
+   "rhea|broc.aidols.near",
+   "rhea|jlu-1018.meme-cooking.near",
+   "rhea|gnear-229.meme-cooking.near",
+   "rhea|vote-1737.meme-cooking.near",
+   "rhea|mwalc-1122.meme-cooking.near",
+   "rhea|duct-1078.meme-cooking.near",
+   "rhea|wow-1207.meme-cooking.near",
+   "rhea|celo.token.a11bd.near",
+   "rhea|ztarknear-1845.meme-cooking.near",
+   "rhea|nearnvidia.near",
+   "rhea|nearai.aidols.near",
+   "rhea|dbio.near",
+   "rhea|cam-167.meme-cooking.near",
+   "rhea|rheascot-1736.meme-cooking.near",
+   "rhea|zolanear-1726.meme-cooking.near",
+   "rhea|myriadcore.near",
+   "rhea|dogc-392.meme-cooking.near",
+   "rhea|5illia-1725.meme-cooking.near",
+   "rhea|pearpe.tkn.near",
+   "rhea|adhd-1076.meme-cooking.near",
+   "rhea|omgy-1992.meme-cooking.near",
+   "rhea|ironclaw-1956.meme-cooking.near",
+   "rhea|shade-1803.meme-cooking.near",
+   "rhea|pumpkg-332.meme-cooking.near",
+   "rhea|c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.factory.bridge.near",
+   "rhea|token.burrow.near",
+   "rhea|root-676.meme-cooking.near",
+   "rhea|nersig-282.meme-cooking.near",
+   "rhea|benthedog.near",
+   "rhea|a4ef4b0b23c1fc81d3f9ecf93510e64f58a4a016.factory.bridge.near",
+   "rhea|dd.tg",
+   "rhea|frkdat-1662.meme-cooking.near",
+   "rhea|rrr-ggro.nearrr-fun.near",
+   "rhea|hornyillia-314.meme-cooking.near",
+   "rhea|n-1813.meme-cooking.near",
+   "rhea|nte-1031.meme-cooking.near",
+   "rhea|rust-334.meme-cooking.near",
+   "rhea|sin-339.meme-cooking.near",
+   "rhea|intent-1070.meme-cooking.near",
+   "rhea|mnga-376.meme-cooking.near",
+   "rhea|noear-324.meme-cooking.near",
+   "rhea|simp-390.meme-cooking.near",
+   "rhea|spear-1565.meme-cooking.near",
+   "rhea|radeonear.tkn.near",
+   "rhea|mark.gra-fun.near",
+   "rhea|ailex-1155.meme-cooking.near",
+   "rhea|bana-998.meme-cooking.near",
+   "rhea|zero.gra-fun.near",
+   "rhea|babyblackdragon.tkn.near",
+   "rhea|shit-1170.meme-cooking.near",
+   "dcl|wrap.near",
+   "shards|l000000.factory.shardsmarket.near"
+  ],
+  "registered_total": 108,
+  "at_venue": true,
+  "enable_cost": [
+   [
+    "rhea",
+    "20000000000000000000000"
+   ],
+   [
+    "intear",
+    "20000000000000000000000"
+   ],
+   [
+    "dcl",
+    "30000000000000000000000"
+   ],
+   [
+    "shards",
+    "30000000000000000000000"
+   ]
+  ],
+  "token_open": false
+ },
+ "panel": {
+  "out": "98809413532361932772",
+  "impact_bps": 5,
+  "venue": {
+   "Rhea": {
+    "route": [
+     {
+      "amount_in": "10000000000000000000000000",
+      "hops": [
+       {
+        "pool_id": 2,
+        "token_in": "wrap.near",
+        "token_out": "6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near"
+       }
+      ]
+     },
+     {
+      "amount_in": "10000000000000000000000000",
+      "hops": [
+       {
+        "pool_id": 4,
+        "token_in": "wrap.near",
+        "token_out": "dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near"
+       },
+       {
+        "pool_id": 1910,
+        "token_in": "dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near",
+        "token_out": "6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "min_out_500": "93868942855743836133",
+  "auto_slip_bps": 100,
+  "min_out_auto": "97821319397038313444"
+ },
+ "pool_reads": [
+  {
+   "method": "get_stable_pool",
+   "args": {
+    "pool_id": 1910
+   },
+   "finality": "final",
+   "block_height": 221097080,
+   "result_sha256": "f22182683c665a5c426904a59470513f6c2778932b82e5e2ec4c51f5a4401f57"
+  },
+  {
+   "method": "get_pool_by_ids",
+   "args": {
+    "pool_ids": [
+     8595,
+     8738
+    ]
+   },
+   "finality": "final",
+   "block_height": 221097080,
+   "result_sha256": "dfc4cc696503153df7f27ac8a37880d0d78bf3411bd54c33ac98bf468fcaba1b"
+  },
+  {
+   "method": "get_pool_by_ids",
+   "args": {
+    "pool_ids": [
+     2,
+     3,
+     4,
+     57,
+     67,
+     69,
+     79,
+     81,
+     535,
+     974,
+     1395,
+     1508,
+     2407,
+     2409,
+     3088,
+     3411,
+     3474,
+     3477,
+     3606,
+     3667,
+     3690,
+     3703,
+     3724,
+     3725,
+     3726,
+     3749,
+     3788,
+     3790,
+     3799,
+     3801,
+     3804,
+     3807,
+     3879,
+     4236,
+     4276,
+     4282,
+     4293,
+     4298,
+     4314,
+     4316,
+     4317,
+     4318,
+     4319,
+     4321,
+     4326,
+     4335,
+     4348,
+     4349,
+     4352,
+     4369,
+     4372,
+     4375,
+     4378,
+     4380,
+     4386,
+     4399,
+     4426,
+     4450,
+     4451,
+     4512,
+     4562,
+     4578,
+     4598,
+     4612,
+     4616,
+     4632,
+     4637,
+     4639,
+     4698,
+     4709,
+     4801,
+     4914,
+     5083,
+     5096,
+     5155,
+     5391,
+     5438,
+     5445,
+     5469,
+     5470,
+     5650,
+     5699,
+     6065,
+     6432,
+     6453,
+     6458,
+     6473,
+     6484,
+     6518,
+     6540,
+     6575,
+     6579,
+     6582,
+     6584,
+     6589,
+     6590,
+     6662,
+     6882,
+     7216,
+     7463
+    ]
+   },
+   "finality": "final",
+   "block_height": 221097080,
+   "result_sha256": "6a451dfa425f14a38f72876d130ef77d70ffd2d265ce2b985edb69dacfc422aa"
+  },
+  {
+   "method": "get_pool_by_ids",
+   "args": {
+    "pool_ids": [
+     0,
+     1,
+     276,
+     377,
+     852,
+     1207,
+     1371,
+     2448,
+     2799,
+     3019,
+     3599,
+     3815,
+     4243,
+     4525,
+     4530,
+     4547,
+     4656,
+     4729,
+     4771,
+     4840,
+     5154,
+     5222,
+     5283,
+     5462,
+     5466,
+     5473,
+     5494,
+     5502,
+     5519,
+     5538,
+     5566,
+     5574,
+     5576,
+     5579,
+     5583,
+     5630,
+     5631,
+     5634,
+     5649,
+     5661,
+     5675,
+     5720,
+     5726,
+     5728,
+     5730,
+     5740,
+     5741,
+     5753,
+     5754,
+     5761,
+     5767,
+     5778,
+     5858,
+     5936,
+     5975,
+     5977,
+     5978,
+     5980,
+     5982,
+     6035,
+     6045,
+     6055,
+     6431,
+     6503,
+     6591,
+     6594,
+     6613,
+     6618,
+     6657,
+     6672,
+     6679,
+     6690,
+     6716,
+     6724,
+     6775,
+     8664,
+     8696,
+     8700,
+     8842
+    ]
+   },
+   "finality": "final",
+   "block_height": 221097080,
+   "result_sha256": "811e86661278a3664525de5d47ba9c22c19e411dddef8a0671d3e19d55ee5d5c"
+  }
+ ],
+ "pool_kinds": {
+  "0": "SIMPLE_POOL",
+  "1": "SIMPLE_POOL",
+  "2": "SIMPLE_POOL",
+  "3": "SIMPLE_POOL",
+  "4": "SIMPLE_POOL",
+  "67": "SIMPLE_POOL",
+  "69": "SIMPLE_POOL",
+  "79": "SIMPLE_POOL",
+  "276": "SIMPLE_POOL",
+  "377": "SIMPLE_POOL",
+  "535": "SIMPLE_POOL",
+  "852": "SIMPLE_POOL",
+  "974": "SIMPLE_POOL",
+  "1207": "SIMPLE_POOL",
+  "1371": "SIMPLE_POOL",
+  "1395": "SIMPLE_POOL",
+  "1910": "STABLE_SWAP",
+  "2448": "SIMPLE_POOL",
+  "2799": "SIMPLE_POOL",
+  "3019": "SIMPLE_POOL",
+  "3088": "SIMPLE_POOL",
+  "3411": "SIMPLE_POOL",
+  "3474": "SIMPLE_POOL",
+  "3599": "SIMPLE_POOL",
+  "3667": "SIMPLE_POOL",
+  "3724": "SIMPLE_POOL",
+  "3790": "SIMPLE_POOL",
+  "3807": "SIMPLE_POOL",
+  "3815": "SIMPLE_POOL",
+  "3879": "SIMPLE_POOL",
+  "4243": "SIMPLE_POOL",
+  "4276": "SIMPLE_POOL",
+  "4314": "SIMPLE_POOL",
+  "4369": "SIMPLE_POOL",
+  "4512": "SIMPLE_POOL",
+  "4525": "SIMPLE_POOL",
+  "4530": "SIMPLE_POOL",
+  "4547": "SIMPLE_POOL",
+  "4656": "SIMPLE_POOL",
+  "4729": "SIMPLE_POOL",
+  "4771": "SIMPLE_POOL",
+  "4840": "SIMPLE_POOL",
+  "5154": "SIMPLE_POOL",
+  "5155": "SIMPLE_POOL",
+  "5222": "SIMPLE_POOL",
+  "5283": "SIMPLE_POOL",
+  "5391": "SIMPLE_POOL",
+  "5462": "SIMPLE_POOL",
+  "5466": "SIMPLE_POOL",
+  "5469": "SIMPLE_POOL",
+  "5470": "SIMPLE_POOL",
+  "5473": "SIMPLE_POOL",
+  "5494": "SIMPLE_POOL",
+  "5502": "SIMPLE_POOL",
+  "5519": "SIMPLE_POOL",
+  "5538": "SIMPLE_POOL",
+  "5566": "SIMPLE_POOL",
+  "5574": "SIMPLE_POOL",
+  "5576": "SIMPLE_POOL",
+  "5579": "SIMPLE_POOL",
+  "5583": "SIMPLE_POOL",
+  "5630": "SIMPLE_POOL",
+  "5631": "SIMPLE_POOL",
+  "5634": "SIMPLE_POOL",
+  "5649": "SIMPLE_POOL",
+  "5650": "SIMPLE_POOL",
+  "5661": "SIMPLE_POOL",
+  "5675": "SIMPLE_POOL",
+  "5720": "SIMPLE_POOL",
+  "5726": "SIMPLE_POOL",
+  "5728": "SIMPLE_POOL",
+  "5730": "SIMPLE_POOL",
+  "5740": "SIMPLE_POOL",
+  "5741": "SIMPLE_POOL",
+  "5753": "SIMPLE_POOL",
+  "5754": "SIMPLE_POOL",
+  "5761": "SIMPLE_POOL",
+  "5767": "SIMPLE_POOL",
+  "5778": "SIMPLE_POOL",
+  "5858": "SIMPLE_POOL",
+  "5936": "SIMPLE_POOL",
+  "5975": "SIMPLE_POOL",
+  "5977": "SIMPLE_POOL",
+  "5978": "SIMPLE_POOL",
+  "5980": "SIMPLE_POOL",
+  "5982": "SIMPLE_POOL",
+  "6035": "SIMPLE_POOL",
+  "6045": "SIMPLE_POOL",
+  "6055": "SIMPLE_POOL",
+  "6065": "SIMPLE_POOL",
+  "6431": "SIMPLE_POOL",
+  "6458": "SIMPLE_POOL",
+  "6503": "SIMPLE_POOL",
+  "6518": "SIMPLE_POOL",
+  "6591": "SIMPLE_POOL",
+  "6594": "SIMPLE_POOL",
+  "6613": "SIMPLE_POOL",
+  "6618": "SIMPLE_POOL",
+  "6657": "SIMPLE_POOL",
+  "6672": "SIMPLE_POOL",
+  "6679": "SIMPLE_POOL",
+  "6690": "SIMPLE_POOL",
+  "6716": "SIMPLE_POOL",
+  "6724": "SIMPLE_POOL",
+  "6775": "SIMPLE_POOL",
+  "8595": "SIMPLE_POOL",
+  "8664": "SIMPLE_POOL",
+  "8696": "SIMPLE_POOL",
+  "8700": "SIMPLE_POOL",
+  "8842": "SIMPLE_POOL"
+ },
+ "pools": {
+  "0": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "token.skyward.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "79771881269258746464569",
+    "3376505658501321172443558141"
+   ],
+   "total_fee": 30
+  },
+  "1": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.factory.bridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "1361245095793549063",
+    "653052376775211879387619967"
+   ],
+   "total_fee": 30
+  },
+  "2": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "73128062248131958337925",
+    "14747360698728988819950882009"
+   ],
+   "total_fee": 30
+  },
+  "3": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "46527896793",
+    "9382453612969168129371842866"
+   ],
+   "total_fee": 30
+  },
+  "4": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "89675163172",
+    "18070394984767178036249050947"
+   ],
+   "total_fee": 30
+  },
+  "67": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near",
+    "dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near"
+   ],
+   "amounts": [
+    "138539642945743944173",
+    "138895711"
+   ],
+   "total_fee": 20
+  },
+  "69": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near",
+    "a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near"
+   ],
+   "amounts": [
+    "111701392159165664464",
+    "111528891"
+   ],
+   "total_fee": 20
+  },
+  "79": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "token.v2.ref-finance.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "1625216493422796552579324",
+    "29511411840849807047742887652"
+   ],
+   "total_fee": 40
+  },
+  "276": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "a4ef4b0b23c1fc81d3f9ecf93510e64f58a4a016.factory.bridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "268886510776239879461859",
+    "572695349494854781668930020"
+   ],
+   "total_fee": 30
+  },
+  "377": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "token.paras.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "7868004752892730735579588",
+    "1063383142694472766579721513"
+   ],
+   "total_fee": 30
+  },
+  "535": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "meta-pool.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "13125424082678327926891100646",
+    "19826517549850449685532398108"
+   ],
+   "total_fee": 30
+  },
+  "852": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "52a047ee205701895ee06a375492490ec9c597ce.factory.bridge.near"
+   ],
+   "amounts": [
+    "10910347524130276448263561822",
+    "4843498439550334995274044"
+   ],
+   "total_fee": 30
+  },
+  "974": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "2260fac5e5542a773aa44fbcfedf7c193bc2c599.factory.bridge.near"
+   ],
+   "amounts": [
+    "4282534057916762253707027944",
+    "26071584"
+   ],
+   "total_fee": 30
+  },
+  "1207": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "aurora",
+    "wrap.near"
+   ],
+   "amounts": [
+    "8268033700642265619",
+    "7601893506984103328353031377"
+   ],
+   "total_fee": 30
+  },
+  "1371": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "dbio.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "23269433903607678833170226",
+    "858332550751457137280263296"
+   ],
+   "total_fee": 30
+  },
+  "1395": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "aaaaaa20d9e0e2461697782ef11675f668207961.factory.bridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "350783886870236607115708",
+    "4020119842046658593355310602"
+   ],
+   "total_fee": 30
+  },
+  "1910": {
+   "token_account_ids": [
+    "dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near",
+    "a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.factory.bridge.near",
+    "6b175474e89094c44da98b954eedeac495271d0f.factory.bridge.near"
+   ],
+   "decimals": [
+    6,
+    6,
+    18
+   ],
+   "amounts": [
+    "1278773600837",
+    "459103995793",
+    "455225311363280843791355"
+   ],
+   "c_amounts": [
+    "1278773600837313632860611",
+    "459103995793020900530347",
+    "455225311363280843791355"
+   ],
+   "total_fee": 2,
+   "amp": 240,
+   "shares_total_supply": "2162429139710553672407733"
+  },
+  "2448": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "myriadcore.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "123247570440203096392081893",
+    "767660302673920999158612588"
+   ],
+   "total_fee": 30
+  },
+  "2799": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "celo.token.a11bd.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "39530140730068886255725475202",
+    "900503644264727635637946621"
+   ],
+   "total_fee": 30
+  },
+  "3019": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "sol.token.a11bd.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "197751197187242997144862171",
+    "8111423316211270877335614809"
+   ],
+   "total_fee": 30
+  },
+  "3088": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "linear-protocol.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "1155185412611353714167982719",
+    "1646719226427275733469692971"
+   ],
+   "total_fee": 30
+  },
+  "3411": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "gear.enleap.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "593859320924346496854297",
+    "6412968615143535995151404780"
+   ],
+   "total_fee": 200
+  },
+  "3474": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "token.burrow.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "1564437224092154938444542",
+    "608017037355802051943985231"
+   ],
+   "total_fee": 60
+  },
+  "3599": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "apys.token.a11bd.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "7979256969016697442830369324728",
+    "4962311750203093000702474668"
+   ],
+   "total_fee": 30
+  },
+  "3667": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "token.sweat",
+    "wrap.near"
+   ],
+   "amounts": [
+    "19554502698211141976758820",
+    "416439110046327722349530555"
+   ],
+   "total_fee": 30
+  },
+  "3724": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "usdt.tether-token.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "152707506",
+    "32031300671094371954492439"
+   ],
+   "total_fee": 1990
+  },
+  "3790": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "ftv2.nekotoken.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "8628608921765462964528586306232",
+    "30832767693540680912338698"
+   ],
+   "total_fee": 1000
+  },
+  "3807": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "ftv2.nekotoken.near"
+   ],
+   "amounts": [
+    "1295736628769275350314449026",
+    "358187149950041258107115560789107"
+   ],
+   "total_fee": 60
+  },
+  "3815": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "e99de844ef3ef72806cf006224ef3b813e82662f.factory.bridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "1476930617268277608676366",
+    "1362533258356427185694506992"
+   ],
+   "total_fee": 30
+  },
+  "3879": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "usdt.tether-token.near"
+   ],
+   "amounts": [
+    "445327136157511995644350391",
+    "2219934812"
+   ],
+   "total_fee": 30
+  },
+  "4243": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "neat.nrc-20.near"
+   ],
+   "amounts": [
+    "2760349821517692511621087558",
+    "923052297373931"
+   ],
+   "total_fee": 200
+  },
+  "4276": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "blackdragon.tkn.near"
+   ],
+   "amounts": [
+    "6211880755605968132100996911",
+    "2721428507371966407855897068282236733"
+   ],
+   "total_fee": 30
+  },
+  "4314": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "token.lonkingnearbackto2024.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "7437651175597400720",
+    "3150939040268930602859473785"
+   ],
+   "total_fee": 30
+  },
+  "4369": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "token.0xshitzu.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "16138608878929425890636673",
+    "7025032776320727979402688009"
+   ],
+   "total_fee": 30
+  },
+  "4512": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+    "wrap.near"
+   ],
+   "amounts": [
+    "1138176062059",
+    "229459172321484949454093165158"
+   ],
+   "total_fee": 30
+  },
+  "4525": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "853d955acef822db058eb8505911ed77f175b99e.factory.bridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "132780459262316969460732",
+    "26499815568265239458813739811"
+   ],
+   "total_fee": 30
+  },
+  "4530": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "benthedog.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "12545998257837488",
+    "603310898654497018575080139"
+   ],
+   "total_fee": 5
+  },
+  "4547": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "nearnvidia.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "55238682298968421446",
+    "846729056116768987163949355"
+   ],
+   "total_fee": 20
+  },
+  "4656": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "radeonear.tkn.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "348359651829870889676331209216",
+    "512181230245799456858862858"
+   ],
+   "total_fee": 30
+  },
+  "4729": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "22.contract.portalbridge.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "5468979466",
+    "1137753127132069177583389640"
+   ],
+   "total_fee": 30
+  },
+  "4771": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "touched.tkn.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "239865056361363656080009769406482",
+    "21179245682795887656691046363"
+   ],
+   "total_fee": 30
+  },
+  "4840": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "babyblackdragon.tkn.near"
+   ],
+   "amounts": [
+    "461681435123039743832916328",
+    "14079115308108689650194292814738239801"
+   ],
+   "total_fee": 100
+  },
+  "5154": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "wbnb.hot.tg"
+   ],
+   "amounts": [
+    "1802250646711304210291809524",
+    "24626497752406529265"
+   ],
+   "total_fee": 30
+  },
+  "5155": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "mpdao-token.near"
+   ],
+   "amounts": [
+    "324531961373015899361363",
+    "307481661"
+   ],
+   "total_fee": 100
+  },
+  "5222": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "dd.tg",
+    "wrap.near"
+   ],
+   "amounts": [
+    "9146296904025026",
+    "554875381710048784662443064"
+   ],
+   "total_fee": 30
+  },
+  "5283": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "cz.token0.near"
+   ],
+   "amounts": [
+    "1143470438043281644624277804",
+    "664054008229469876967409783"
+   ],
+   "total_fee": 30
+  },
+  "5391": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "kat.token0.near"
+   ],
+   "amounts": [
+    "2566759210848547609472406442",
+    "96246257257732010533119137"
+   ],
+   "total_fee": 30
+  },
+  "5462": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "chill-129.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "858675932307821858968489026",
+    "48390326204173463761472792841"
+   ],
+   "total_fee": 10
+  },
+  "5466": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "neardog-0.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "761085361710575895708766287",
+    "4287175265610082404840247724"
+   ],
+   "total_fee": 10
+  },
+  "5469": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "aaaaaa20d9e0e2461697782ef11675f668207961.factory.bridge.near"
+   ],
+   "amounts": [
+    "29992923534323027397459798823",
+    "2615674619675057940821205"
+   ],
+   "total_fee": 30
+  },
+  "5470": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "usdt.tether-token.near"
+   ],
+   "amounts": [
+    "235942478574516996783424888",
+    "1172761987"
+   ],
+   "total_fee": 1
+  },
+  "5473": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "cam-167.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "620029781186403309193490950",
+    "773733991101317147091166067"
+   ],
+   "total_fee": 10
+  },
+  "5494": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "4illia-222.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "104460296617182399922828095",
+    "3439041334265544930040479163"
+   ],
+   "total_fee": 10
+  },
+  "5502": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "gnear-229.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "283505585471313466807701992",
+    "1011019728258165112161565221"
+   ],
+   "total_fee": 10
+  },
+  "5519": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "hijack-252.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "394309241406025063365832657",
+    "1289458619470957885202950754"
+   ],
+   "total_fee": 10
+  },
+  "5538": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "nersig-282.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "969157099006448703448571934",
+    "607692995105772947584827750"
+   ],
+   "total_fee": 10
+  },
+  "5566": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "hornyillia-314.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "912073124721251486849466597",
+    "549348966682622849548039739"
+   ],
+   "total_fee": 10
+  },
+  "5574": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "noear-324.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "252144264598395034339371013",
+    "521797293630625543864531853"
+   ],
+   "total_fee": 10
+  },
+  "5576": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "pumpkg-332.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "636246373873362489629338938",
+    "661309386852594625338632910"
+   ],
+   "total_fee": 10
+  },
+  "5579": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "rust-334.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "99341136038306073488459379",
+    "439277680948259510462238983"
+   ],
+   "total_fee": 10
+  },
+  "5583": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "sin-339.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "947215057776392142016315519797",
+    "541531554447258926917730301"
+   ],
+   "total_fee": 10
+  },
+  "5630": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "mnga-376.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "941014088042107658641789059",
+    "532036783333392873651512250"
+   ],
+   "total_fee": 10
+  },
+  "5631": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "simp-390.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "905494425069601846506476950492",
+    "519559014171437978378817051"
+   ],
+   "total_fee": 10
+  },
+  "5634": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "dogc-392.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "786238025130325369750600",
+    "746028542136518755114365737"
+   ],
+   "total_fee": 10
+  },
+  "5649": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "ribbit-426.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "255458131365678334646038",
+    "3492879466887963161240045954"
+   ],
+   "total_fee": 10
+  },
+  "5650": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "purge-558.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "70822430461018162410792322",
+    "16458504206647448835035861443"
+   ],
+   "total_fee": 10
+  },
+  "5661": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "cooked-612.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "298244851265",
+    "1637875708542345858285246667"
+   ],
+   "total_fee": 10
+  },
+  "5675": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "root-676.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "930348014763459302872894750",
+    "635305764328528122054215176"
+   ],
+   "total_fee": 10
+  },
+  "5720": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "abg-966.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "167406387413854635618530153",
+    "4825834690867826966609951148"
+   ],
+   "total_fee": 10
+  },
+  "5726": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "bana-998.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "963733566130055453183648311",
+    "505678033655361936072275293"
+   ],
+   "total_fee": 10
+  },
+  "5728": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "jlu-1018.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "133287366042890702181232767",
+    "1022975748292440604779973153"
+   ],
+   "total_fee": 10
+  },
+  "5730": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "nte-1031.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "900603558327543981715898438",
+    "544202651317139603542875886"
+   ],
+   "total_fee": 10
+  },
+  "5740": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "adhd-1076.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "683796771812819327128446938",
+    "724445653350913376105521677"
+   ],
+   "total_fee": 10
+  },
+  "5741": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "duct-1078.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "554202749450397223423918327",
+    "950300279364626850796871595"
+   ],
+   "total_fee": 10
+  },
+  "5753": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "intent-1070.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "922646296796748149474480600",
+    "533439778204929068463919213"
+   ],
+   "total_fee": 10
+  },
+  "5754": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "mwalc-1122.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "711725733762026718611279857",
+    "826031493490104145546999887"
+   ],
+   "total_fee": 10
+  },
+  "5761": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "ailex-1155.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "957251229067388837379293856",
+    "507550672004336202779204141"
+   ],
+   "total_fee": 10
+  },
+  "5767": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "shit-1170.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "156642857641128613057942771",
+    "495974537033072469024960627"
+   ],
+   "total_fee": 10
+  },
+  "5778": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wow-1207.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "915764911629085335369142229",
+    "945249460525470357326462241"
+   ],
+   "total_fee": 10
+  },
+  "5858": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "dogshit-1408.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "163944182190720109248030062",
+    "1236783413798617444761166353"
+   ],
+   "total_fee": 10
+  },
+  "5936": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "spear-1565.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "36201889181375458409356471128331",
+    "513554189159222429240815481"
+   ],
+   "total_fee": 10
+  },
+  "5975": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "zero.gra-fun.near"
+   ],
+   "amounts": [
+    "503487463668818303971926041",
+    "925870576580374749816144243795775"
+   ],
+   "total_fee": 25
+  },
+  "5977": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "nearai.aidols.near"
+   ],
+   "amounts": [
+    "738958141564241622309743757",
+    "469286277959942247622094375975526"
+   ],
+   "total_fee": 25
+  },
+  "5978": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "score.aidols.near"
+   ],
+   "amounts": [
+    "1832405595918218010984944466",
+    "181838990429792565726763165992976"
+   ],
+   "total_fee": 25
+  },
+  "5980": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "broc.aidols.near"
+   ],
+   "amounts": [
+    "1056193510811583669397260253",
+    "293652032543318767640394030547935"
+   ],
+   "total_fee": 25
+  },
+  "5982": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "img_8327-1591.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "194806867782858138316703906",
+    "1285130097477580061596212417"
+   ],
+   "total_fee": 10
+  },
+  "6035": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "pepear.aidols.near"
+   ],
+   "amounts": [
+    "2059418092698117794787564635",
+    "150818457545972470437528642259046"
+   ],
+   "total_fee": 25
+  },
+  "6045": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "mark.gra-fun.near"
+   ],
+   "amounts": [
+    "511323799717253263896852674",
+    "936980162764100751493523049210510"
+   ],
+   "total_fee": 25
+  },
+  "6055": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "xpost-1634.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "439097717725414797154286543",
+    "1116143356767418556556063719"
+   ],
+   "total_fee": 10
+  },
+  "6065": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "zec.omft.near"
+   ],
+   "amounts": [
+    "29359591553963366428630131262",
+    "11781747297"
+   ],
+   "total_fee": 0
+  },
+  "6431": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "frkdat-1662.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "864955357664744152768707467",
+    "562927840418156153619784192"
+   ],
+   "total_fee": 10
+  },
+  "6458": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "token.rhealab.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "9276836877085431892676668",
+    "130817013923420408486013318482"
+   ],
+   "total_fee": 30
+  },
+  "6503": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "token.publicailab.near"
+   ],
+   "amounts": [
+    "7636880003742153280387074905",
+    "6423855781437691312772402"
+   ],
+   "total_fee": 30
+  },
+  "6518": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "jambo-1679.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "119218086474593906211292093",
+    "6776136880210254451097613486"
+   ],
+   "total_fee": 10
+  },
+  "6591": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "5illia-1725.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "27342256445391039389356",
+    "743633112222684354529227329"
+   ],
+   "total_fee": 10
+  },
+  "6594": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "zolanear-1726.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "378522517618990285761352211",
+    "785917643255534949816593609"
+   ],
+   "total_fee": 10
+  },
+  "6613": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "rheascot-1736.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "94452750392007522088833585",
+    "782044962162121308478513760"
+   ],
+   "total_fee": 10
+  },
+  "6618": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "vote-1737.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "422204143483878688786233170",
+    "951629191749336454985088852"
+   ],
+   "total_fee": 10
+  },
+  "6657": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "shade-1803.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "723990907888118206542771076",
+    "670905014316918614714777080"
+   ],
+   "total_fee": 10
+  },
+  "6672": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "n-1813.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "396432251807981646598127337",
+    "545355461754525829766694531"
+   ],
+   "total_fee": 10
+  },
+  "6679": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "itlx.intellex_xyz.near"
+   ],
+   "amounts": [
+    "17676391985973154481078977908",
+    "101685612085456098795511791680458"
+   ],
+   "total_fee": 30
+  },
+  "6690": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "ztarknear-1845.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "765846667905447850293428714",
+    "905155317555207264094475376"
+   ],
+   "total_fee": 10
+  },
+  "6716": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "cfi.consumer-fi.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "20101355040186682718711798",
+    "2431284981278800004486563791"
+   ],
+   "total_fee": 30
+  },
+  "6724": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "npro.nearmobile.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "681987746480042771005043218881",
+    "46842275648433473779246014197"
+   ],
+   "total_fee": 30
+  },
+  "6775": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "ironclaw-1956.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "661255263145125886264014117",
+    "625034649032137457225678385"
+   ],
+   "total_fee": 10
+  },
+  "8595": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1"
+   ],
+   "amounts": [
+    "3980365030726275884131906227",
+    "19772514987"
+   ],
+   "total_fee": 99
+  },
+  "8664": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "rrr-ggro.nearrr-fun.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "854626924636328783809516361",
+    "556234771750487415701468218"
+   ],
+   "total_fee": 30
+  },
+  "8696": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "l000000.factory.shardsmarket.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "24114574417942560145594046",
+    "1311614087809398664881159253"
+   ],
+   "total_fee": 100
+  },
+  "8700": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "omgy-1992.meme-cooking.near",
+    "wrap.near"
+   ],
+   "amounts": [
+    "834064260011050662878851179",
+    "684422970467443039574360858"
+   ],
+   "total_fee": 10
+  },
+  "8842": {
+   "pool_kind": "SIMPLE_POOL",
+   "token_account_ids": [
+    "wrap.near",
+    "pearpe.tkn.near"
+   ],
+   "amounts": [
+    "725224234306000084345992604",
+    "10523626757988488331263460804"
+   ],
+   "total_fee": 250
+  }
+ },
+ "calls": []
+}

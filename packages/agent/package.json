@@ -1,0 +1,42 @@
+{
+  "name": "@nearswaps/agent",
+  "version": "0.1.0",
+  "description": "Node SDK for AI agents trading NEAR tokens on nearswaps through the nekoorders.near 1-click contract, under hard limits on chain and a policy file.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "nearswaps-agent": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node test/run.mjs",
+    "smoke": "npm run build && node test/live/smoke.mjs"
+  },
+  "keywords": [
+    "near",
+    "agent",
+    "mcp",
+    "trading",
+    "nearswaps"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "typescript": "^5.6.0"
+  }
+}

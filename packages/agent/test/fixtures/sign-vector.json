@@ -1,0 +1,39 @@
+{
+ "note": "Generated with near-api-js 5.1.1 (the bundle the Terminal signs with): createTransaction + functionCall + SignedTransaction.encode",
+ "secret_key": "ed25519:2K5t4gfxE4JDth1vyNDnBp3SRjrt3ZjsZt7pzuYtkz5vdFN9bNr8B6FHmeNgFYXS1aoH62RNcNB5YNUXTT3rpj4k",
+ "public_key": "ed25519:GKbfrDY8dWpUu7J1Qem2q9wkYLupqLqqPwBc893YzD8C",
+ "signer_id": "agent-demo.near",
+ "receiver_id": "nekoorders.near",
+ "nonce": "123456789012",
+ "block_hash": "5wbD6GsVBReHetMUw17QcNne8BjB1xSKRoU4JYpafEx5",
+ "method_name": "trade",
+ "args": {
+  "venue": {
+   "Rhea": {
+    "route": [
+     {
+      "amount_in": "100000000000000000000000",
+      "hops": [
+       {
+        "pool_id": 4512,
+        "token_in": "wrap.near",
+        "token_out": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "token_in": "wrap.near",
+  "token_out": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+  "amount_in": "100000000000000000000000",
+  "min_out": "470000",
+  "fee_bps": 50,
+  "referrer": null
+ },
+ "gas": "300000000000000",
+ "deposit": "0",
+ "tx_base64": "DwAAAGFnZW50LWRlbW8ubmVhcgDjovWw1MxGE5KSyFNHf9xA5hiHAtvc0Sh3jwH3Sw0c6RQamb4cAAAADwAAAG5la29vcmRlcnMubmVhcklqyoDk2PKfuOjNgWw6+0jT8QOXCzou4WAMCMpnMm3uAQAAAAIFAAAAdHJhZGWEAQAAeyJ2ZW51ZSI6eyJSaGVhIjp7InJvdXRlIjpbeyJhbW91bnRfaW4iOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJob3BzIjpbeyJwb29sX2lkIjo0NTEyLCJ0b2tlbl9pbiI6IndyYXAubmVhciIsInRva2VuX291dCI6IjE3MjA4NjI4Zjg0ZjVkNmFkMzNmMGRhM2JiYmViMjdmZmNiMzk4ZWFjNTAxYTMxYmQ2YWQyMDExZTM2MTMzYTEifV19XX19LCJ0b2tlbl9pbiI6IndyYXAubmVhciIsInRva2VuX291dCI6IjE3MjA4NjI4Zjg0ZjVkNmFkMzNmMGRhM2JiYmViMjdmZmNiMzk4ZWFjNTAxYTMxYmQ2YWQyMDExZTM2MTMzYTEiLCJhbW91bnRfaW4iOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJtaW5fb3V0IjoiNDcwMDAwIiwiZmVlX2JwcyI6NTAsInJlZmVycmVyIjpudWxsfQDAbjHZEAEAAAAAAAAAAAAAAAAAAAAAAA==",
+ "hash": "HGQCjZVUhutkbhWSeuAJG16AP1CFt3g2jq8a53dHZBMc",
+ "signed_base64": "DwAAAGFnZW50LWRlbW8ubmVhcgDjovWw1MxGE5KSyFNHf9xA5hiHAtvc0Sh3jwH3Sw0c6RQamb4cAAAADwAAAG5la29vcmRlcnMubmVhcklqyoDk2PKfuOjNgWw6+0jT8QOXCzou4WAMCMpnMm3uAQAAAAIFAAAAdHJhZGWEAQAAeyJ2ZW51ZSI6eyJSaGVhIjp7InJvdXRlIjpbeyJhbW91bnRfaW4iOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJob3BzIjpbeyJwb29sX2lkIjo0NTEyLCJ0b2tlbl9pbiI6IndyYXAubmVhciIsInRva2VuX291dCI6IjE3MjA4NjI4Zjg0ZjVkNmFkMzNmMGRhM2JiYmViMjdmZmNiMzk4ZWFjNTAxYTMxYmQ2YWQyMDExZTM2MTMzYTEifV19XX19LCJ0b2tlbl9pbiI6IndyYXAubmVhciIsInRva2VuX291dCI6IjE3MjA4NjI4Zjg0ZjVkNmFkMzNmMGRhM2JiYmViMjdmZmNiMzk4ZWFjNTAxYTMxYmQ2YWQyMDExZTM2MTMzYTEiLCJhbW91bnRfaW4iOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJtaW5fb3V0IjoiNDcwMDAwIiwiZmVlX2JwcyI6NTAsInJlZmVycmVyIjpudWxsfQDAbjHZEAEAAAAAAAAAAAAAAAAAAAAAAAAQdgfkJYEayMgwrk9cUn2T4NidKhpJ5TlcoGzbGG0qgPlVfTnYEypU04oSHmtVQWMSx1i6VG0W9wiGwd3WxrMC"
+}

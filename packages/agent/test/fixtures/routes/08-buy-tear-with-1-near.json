@@ -1,0 +1,199 @@
+{
+ "label": "buy TEAR with 1 NEAR",
+ "recorded_at": "2026-10-22T13:19:45.714Z",
+ "source": "https://nearswaps.com/terminal, window.nekoSwap.oneClickIntear (the 1-click panel's own quote), read-only",
+ "inputs": {
+  "token_in": "wrap.near",
+  "token_out": "token.intear.near",
+  "amount_in": "1000000000000000000000000",
+  "venue": "intear"
+ },
+ "config": {
+  "trade_pools": [
+   3807,
+   4512,
+   6458,
+   5462,
+   6724,
+   79,
+   5469,
+   6065,
+   4525,
+   4771,
+   535,
+   4,
+   6679,
+   5650,
+   2,
+   852,
+   3,
+   3019,
+   6503,
+   1207,
+   4369,
+   6518,
+   3411,
+   4276,
+   3599,
+   5720,
+   5466,
+   974,
+   5649,
+   5494,
+   0,
+   4314,
+   5391,
+   4243,
+   6716,
+   6035,
+   5154,
+   5978,
+   3088,
+   5661,
+   8696,
+   3815,
+   5519,
+   5982,
+   5858,
+   5283,
+   4729,
+   6055,
+   377,
+   5980,
+   5728,
+   5502,
+   6618,
+   5754,
+   5741,
+   5778,
+   2799,
+   6690,
+   4547,
+   5977,
+   1371,
+   5473,
+   6613,
+   6594,
+   2448,
+   5634,
+   6591,
+   8842,
+   5740,
+   8700,
+   6775,
+   6657,
+   5576,
+   1,
+   3474,
+   5675,
+   5538,
+   4530,
+   276,
+   5222,
+   6431,
+   8664,
+   5566,
+   6672,
+   5730,
+   5579,
+   5583,
+   5753,
+   5630,
+   5574,
+   5631,
+   5936,
+   4656,
+   6045,
+   5761,
+   5726,
+   5975,
+   4840,
+   5767
+  ],
+  "open_pools": true,
+  "registered": [
+   "rhea|wrap.near",
+   "intear|near",
+   "intear|nep141:token.intear.near",
+   "dcl|wrap.near"
+  ],
+  "registered_total": 108,
+  "at_venue": true,
+  "enable_cost": [
+   [
+    "rhea",
+    "20000000000000000000000"
+   ],
+   [
+    "intear",
+    "20000000000000000000000"
+   ],
+   [
+    "dcl",
+    "30000000000000000000000"
+   ],
+   [
+    "shards",
+    "30000000000000000000000"
+   ]
+  ],
+  "token_open": false
+ },
+ "panel": {
+  "out": "208742792709576344822026368",
+  "mid": null,
+  "venue": {
+   "Intear": {
+    "dex_id": "slimedragon.near/xyk",
+    "message": "AwAAAMAJDgABAAAAEgEAAHARAQABAAAAAwEAABAnAAABAAAA9gAAAAA="
+   }
+  },
+  "min_out_500": "198305653074097527580925049",
+  "auto_slip_bps": 500,
+  "min_out_auto": "198305653074097527580925049"
+ },
+ "pool_reads": [],
+ "pool_kinds": {},
+ "pools": {},
+ "calls": [
+  {
+   "kind": "http",
+   "url": "https://router.intear.tech/route?token_in=near&token_out=token.intear.near&amount_in=1000000000000000000000000&max_wait_ms=1500&slippage_type=Fixed&slippage=0.01&dexes=Plach&referrer_id=nekotesting.near&trader_account_id=nekoorders.near",
+   "body": [
+    {
+     "estimated_amount": {
+      "amount_out": "208742792709576344822026368"
+     },
+     "worst_case_amount": {
+      "amount_out": "206655364782480581373806103"
+     },
+     "dex_id": "Plach",
+     "execution_instructions": [
+      {
+       "NearTransaction": {
+        "receiver_id": "dex.intear.near",
+        "actions": [
+         {
+          "FunctionCall": {
+           "method_name": "deposit_near",
+           "args": "eyJvcGVyYXRpb25zIjp7Im9wZXJhdGlvbnMiOlt7IlN3YXBTaW1wbGUiOnsiZGV4X2lkIjoic2xpbWVkcmFnb24ubmVhci94eWsiLCJtZXNzYWdlIjoiQXdBQUFNQUpEZ0FCQUFBQUVnRUFBSEFSQVFBQkFBQUFBd0VBQUJBbkFBQUJBQUFBOWdBQUFBQT0iLCJhc3NldF9pbiI6Im5lYXIiLCJhc3NldF9vdXQiOiJuZXAxNDE6dG9rZW4uaW50ZWFyLm5lYXIiLCJhbW91bnQiOnsiQW1vdW50Ijp7IkV4YWN0SW4iOiIxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn19LCJjb25zdHJhaW50IjoiMjA2NjU1MzY0NzgyNDgwNTgxMzczODA2MTAzIn19LHsiV2l0aGRyYXciOnsiYXNzZXRfaWQiOiJuZXAxNDE6dG9rZW4uaW50ZWFyLm5lYXIiLCJhbW91bnQiOnsiRnVsbCI6eyJhdF9sZWFzdCI6IjIwNjY1NTM2NDc4MjQ4MDU4MTM3MzgwNjEwMyJ9fSwidG8iOm51bGwsInJlc2N1ZV9hZGRyZXNzIjpudWxsfX1dLCJyZWZlcnJlciI6Im5la290ZXN0aW5nLm5lYXIiLCJyZWZlcnJhbF9mZWVzIjpbXX19",
+           "gas": 64000000000000,
+           "deposit": "1000000000000000000000000"
+          }
+         }
+        ],
+        "is_fee_transaction": false
+       }
+      }
+     ],
+     "needs_unwrap": false,
+     "token_output": "nep141:token.intear.near",
+     "estimated_max_gas_cost": "6522187753888400000000",
+     "estimated_gas_usage": "3222187753888400000000",
+     "storage_deposits": "0",
+     "fee_amount": "0"
+    }
+   ]
+  }
+ ]
+}

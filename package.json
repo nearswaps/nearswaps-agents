@@ -1,0 +1,17 @@
+{
+  "name": "nearswaps-agents",
+  "private": true,
+  "description": "nearswaps agent kit: let an AI agent trade NEAR tokens from a 1-click balance only the owner can withdraw.",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm test --workspaces",
+    "smoke": "npm run smoke --workspace @nearswaps/agent"
+  }
+}
