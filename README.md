@@ -253,6 +253,9 @@ transaction may go to the other node, then it is followed by its hash until it i
 again, so a trade can't happen twice. The only fresh signatures are after a refused nonce and after the contract's
 own "try again in a moment", both before anything ran, and only once (the Terminal's own rule).
 
+Money calls on one agent run one at a time, in the order they were asked for, so an MCP client that calls two at
+once can't pass the daily budget or the cool-down twice, or sign two transactions with the same nonce.
+
 The kit trades on Rhea and on Intear DEX. Rhea DCL launches (Nearly, JustHoot) and Shards curves are read and
 listed, but trading them stays in the Terminal for now.
 

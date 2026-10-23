@@ -222,6 +222,15 @@ export class Agent extends Kit {
   private allowance: bigint | null = null;
   /** Venue::Shift calls that completed, so a call that stops later can say the balance moved. */
   private shifts = 0;
+  /** Money calls run one at a time, in the order they were asked for: each one reads the policy's ledger, the key's
+   * nonce and the balance, and the next must see what the last one did (two buys at once would both pass the daily
+   * budget and the cool-down, and could sign with the same nonce). Reads are not queued. */
+  private queue: Promise<unknown> = Promise.resolve();
+  private serial<T>(f: () => Promise<T>): Promise<T> {
+    const run = this.queue.then(f, f);
+    this.queue = run.catch(() => {});
+    return run;
+  }
   private discount: number | null = null;
   private started = false;
 
@@ -277,9 +286,9 @@ export class Agent extends Kit {
   // ------------------------------------------------------------------ money
 
   /** Buy `token` with `near` NEAR from the 1-click balance. */
-  buy(token: string, near: string | number, opts: { slippage?: Slippage } = {}): Promise<MoneyResult> { return this.trade("buy", token, near, opts); }
+  buy(token: string, near: string | number, opts: { slippage?: Slippage } = {}): Promise<MoneyResult> { return this.serial(() => this.trade("buy", token, near, opts)); }
   /** Sell `amount` of `token` for NEAR: a token amount, "50%" of the balance, or "all". */
-  sell(token: string, amount: string | number, opts: { slippage?: Slippage } = {}): Promise<MoneyResult> { return this.trade("sell", token, amount, opts); }
+  sell(token: string, amount: string | number, opts: { slippage?: Slippage } = {}): Promise<MoneyResult> { return this.serial(() => this.trade("sell", token, amount, opts)); }
 
   private async parts(token: string, market: Market): Promise<{ bal: bigint; p: Parts }> {
     const [list, parts] = await Promise.all([this.views.getTrading(this.accountId), market.v16 ? this.views.getTradingParts(this.accountId).catch(() => null) : null]);
@@ -476,7 +485,8 @@ export class Agent extends Kit {
 
   /** Withdraw `token` (all of it unless `amount` is given) from the 1-click balance to the owner's own wallet. The
    * contract pays the caller only; there is no recipient anywhere. wNEAR arrives as NEAR. Always allowed. */
-  async withdraw(tokenArg = "near", amountArg?: string | number): Promise<MoneyResult> {
+  withdraw(tokenArg = "near", amountArg?: string | number): Promise<MoneyResult> { return this.serial(() => this.withdrawNow(tokenArg, amountArg)); }
+  private async withdrawNow(tokenArg: string, amountArg?: string | number): Promise<MoneyResult> {
     const checks: PolicyCheck[] = [kitCheck("withdraw_to_owner", true, `the contract pays ${this.accountId} only: withdraw has no recipient argument`)];
     const shifts0 = this.shifts, shifted = () => this.shifts > shifts0;
     try {
@@ -516,7 +526,8 @@ export class Agent extends Kit {
    * recover), signed with the agent key: 300 Tgas, 0 deposit. It only ever credits the owner, never twice; on an unclear
    * trade it only frees the tokens for other trades and credits nothing. Not a trade: the policy doesn't apply (it
    * works while the policy is paused) and it costs no budget. */
-  async recoverTrade(id: string | number): Promise<MoneyResult> {
+  recoverTrade(id: string | number): Promise<MoneyResult> { return this.serial(() => this.recoverNow(id)); }
+  private async recoverNow(id: string | number): Promise<MoneyResult> {
     const checks: PolicyCheck[] = [kitCheck("credits_owner", true, `recover_trade only ever credits ${this.accountId}'s 1-click balance, and never twice`)];
     const stop = (c: PolicyCheck) => result("blocked", c.detail, { policy_checks: [...checks, c] });
     try {

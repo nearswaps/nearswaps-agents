@@ -46,9 +46,9 @@ function world(over = {}) {
         const b = Buffer.from(p.signed_tx_base64, "base64");
         // the method name and args out of the signed transaction (borsh), to check what was asked of the contract
         let o = 0; const str = () => { const n = b.readUInt32LE(o); o += 4; const s = b.subarray(o, o + n).toString(); o += n; return s; };
-        str(); o += 33 + 8; const receiver = str(); o += 32 + 4 + 1; const method = str(); const args = JSON.parse(str());
-        sent.push({ receiver, method, args });
-        return over.send ? over.send({ receiver, method, args }, sent.length) : txOutcome("TX" + sent.length, []);
+        str(); o += 33; const nonce = b.readBigUInt64LE(o); o += 8; const receiver = str(); o += 32 + 4 + 1; const method = str(); const args = JSON.parse(str());
+        sent.push({ receiver, method, args, nonce });
+        return over.send ? over.send({ receiver, method, args, nonce }, sent.length) : txOutcome("TX" + sent.length, []);
       },
       tx: () => ({ transportError: true }),
     },
@@ -228,6 +228,41 @@ test("previewTrade (policy check): the same rules as a trade, nothing signed, th
   assert.equal((await b.buy("usdc", "1")).outcome, "filled");
   assert.equal((await b.previewTrade("buy", "usdc", "1", { policyFile: w2.policyFile, account: "agent-demo.near" })).policy_checks.find((c) => c.status === "fail").rule, "cooldown_sec");
   assert.equal((await b.previewTrade("buy", "usdc", "1", { policyFile: w2.policyFile })).outcome, "would pass");
+});
+
+test("money calls at once run one at a time: no overlap, fresh nonces, and the second sees the first in the ledger", async () => {
+  // Two buys started together, with room for both: each send waits a moment; the second never starts before the first ends.
+  let inflight = 0, most = 0;
+  const slow = async () => { inflight++; most = Math.max(most, inflight); await new Promise((r) => setTimeout(r, 20)); inflight--; return txOutcome("FILL", [tradeEv({})]); };
+  const w = world({ policy: { cooldown_sec: 0, daily_budget_near: 10 }, send: slow });
+  const a = await w.open();
+  const [r1, r2] = await Promise.all([a.buy("usdc", "1"), a.buy("usdc", "1")]);
+  assert.equal(r1.outcome, "filled"); assert.equal(r2.outcome, "filled");
+  assert.equal(w.sent.length, 2);
+  assert.equal(most, 1, "the sends never overlapped");
+  assert.equal(w.sent[1].nonce, w.sent[0].nonce + 1n, "each signed with its own nonce");
+  // The daily budget holds one of them only: the second is checked after the first is in the ledger, and blocked.
+  const w2 = world({ policy: { cooldown_sec: 0, daily_budget_near: 1.5 }, send: slow });
+  const b = await w2.open();
+  const rs = await Promise.all([b.buy("usdc", "1"), b.buy("usdc", "1"), b.withdraw("near", "0.1")]);
+  assert.deepEqual(rs.map((r) => r.outcome), ["filled", "blocked", "pending"]);
+  assert.equal(rs[1].policy_checks.find((c) => c.status === "fail").rule, "daily_budget_near");
+  assert.deepEqual(w2.sent.map((x) => x.method), ["trade", "withdraw"], "in the order asked");
+  // The same with the cool-down: the second buy of the token waits its turn, then is blocked by it.
+  const w3 = world({ policy: { daily_budget_near: 10 }, send: slow });
+  const c = await w3.open();
+  const [c1, c2] = await Promise.all([c.buy("usdc", "1"), c.buy("usdc", "1")]);
+  assert.equal(c1.outcome, "filled");
+  assert.equal(c2.policy_checks.find((x) => x.status === "fail").rule, "cooldown_sec");
+  assert.equal(w3.sent.length, 1);
+});
+
+test("a money call that fails doesn't stop the next one in the queue", async () => {
+  const w = world({ policy: { cooldown_sec: 0, daily_budget_near: 10 }, send: (_, n) => (n === 1 ? txOutcome("PANIC", [], { ActionError: { kind: { FunctionCallError: { ExecutionError: "Smart contract panicked: 1-click trading is paused" } } } }) : txOutcome("FILL", [tradeEv({})])) });
+  const a = await w.open();
+  const [r1, r2] = await Promise.all([a.buy("usdc", "1"), a.buy("usdc", "1")]);
+  assert.equal(r1.outcome, "refused");
+  assert.equal(r2.outcome, "filled");
 });
 
 test("a sell of 50% sells half the balance and is not blocked by a bad score", async () => {
