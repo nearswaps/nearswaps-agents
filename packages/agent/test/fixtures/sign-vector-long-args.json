@@ -1,0 +1,90 @@
+{
+ "note": "Generated with near-api-js 5.1.1 (the bundle the Terminal signs with): createTransaction + functionCall + SignedTransaction.encode. A long args payload: a three-leg, nine-hop Rhea route.",
+ "secret_key": "ed25519:2K5t4gfxE4JDth1vyNDnBp3SRjrt3ZjsZt7pzuYtkz5vdFN9bNr8B6FHmeNgFYXS1aoH62RNcNB5YNUXTT3rpj4k",
+ "public_key": "ed25519:GKbfrDY8dWpUu7J1Qem2q9wkYLupqLqqPwBc893YzD8C",
+ "signer_id": "agent-demo.near",
+ "receiver_id": "nekoorders.near",
+ "nonce": "181818181818",
+ "block_hash": "D8Zn9TniUSJJLouH6NaAKtJM1xW1xg4Bo3kBa67y4bA2",
+ "method_name": "trade",
+ "args": {
+  "venue": {
+   "Rhea": {
+    "route": [
+     {
+      "amount_in": "400000000000000000000000",
+      "hops": [
+       {
+        "pool_id": 4512,
+        "token_in": "wrap.near",
+        "token_out": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1"
+       },
+       {
+        "pool_id": 3433,
+        "token_in": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+        "token_out": "usdt.tether-token.near"
+       },
+       {
+        "pool_id": 4179,
+        "token_in": "usdt.tether-token.near",
+        "token_out": "blackdragon.tkn.near"
+       }
+      ]
+     },
+     {
+      "amount_in": "350000000000000000000000",
+      "hops": [
+       {
+        "pool_id": 3879,
+        "token_in": "wrap.near",
+        "token_out": "token.rhealab.near"
+       },
+       {
+        "pool_id": 5949,
+        "token_in": "token.rhealab.near",
+        "token_out": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1"
+       },
+       {
+        "pool_id": 5470,
+        "token_in": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+        "token_out": "blackdragon.tkn.near"
+       }
+      ]
+     },
+     {
+      "amount_in": "250000000000000000000000",
+      "hops": [
+       {
+        "pool_id": 4663,
+        "token_in": "wrap.near",
+        "token_out": "ftv2.nekotoken.near"
+       },
+       {
+        "pool_id": 4887,
+        "token_in": "ftv2.nekotoken.near",
+        "token_out": "dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near"
+       },
+       {
+        "pool_id": 4180,
+        "token_in": "dac17f958d2ee523a2206206994597c13d831ec7.factory.bridge.near",
+        "token_out": "blackdragon.tkn.near"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "token_in": "wrap.near",
+  "token_out": "blackdragon.tkn.near",
+  "amount_in": "1000000000000000000000000",
+  "min_out": "123456789012345678901234567890",
+  "fee_bps": 50,
+  "referrer": null
+ },
+ "gas": "300000000000000",
+ "deposit": "0",
+ "args_bytes": 1345,
+ "tx_base64": "DwAAAGFnZW50LWRlbW8ubmVhcgDjovWw1MxGE5KSyFNHf9xA5hiHAtvc0Sh3jwH3Sw0c6bpINVUqAAAADwAAAG5la29vcmRlcnMubmVhcrQ8XxSupf9BVNi/v4rZ7KAzJwUwgIGkteBreyM19oZLAQAAAAIFAAAAdHJhZGVBBQAAeyJ2ZW51ZSI6eyJSaGVhIjp7InJvdXRlIjpbeyJhbW91bnRfaW4iOiI0MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJob3BzIjpbeyJwb29sX2lkIjo0NTEyLCJ0b2tlbl9pbiI6IndyYXAubmVhciIsInRva2VuX291dCI6IjE3MjA4NjI4Zjg0ZjVkNmFkMzNmMGRhM2JiYmViMjdmZmNiMzk4ZWFjNTAxYTMxYmQ2YWQyMDExZTM2MTMzYTEifSx7InBvb2xfaWQiOjM0MzMsInRva2VuX2luIjoiMTcyMDg2MjhmODRmNWQ2YWQzM2YwZGEzYmJiZWIyN2ZmY2IzOThlYWM1MDFhMzFiZDZhZDIwMTFlMzYxMzNhMSIsInRva2VuX291dCI6InVzZHQudGV0aGVyLXRva2VuLm5lYXIifSx7InBvb2xfaWQiOjQxNzksInRva2VuX2luIjoidXNkdC50ZXRoZXItdG9rZW4ubmVhciIsInRva2VuX291dCI6ImJsYWNrZHJhZ29uLnRrbi5uZWFyIn1dfSx7ImFtb3VudF9pbiI6IjM1MDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImhvcHMiOlt7InBvb2xfaWQiOjM4NzksInRva2VuX2luIjoid3JhcC5uZWFyIiwidG9rZW5fb3V0IjoidG9rZW4ucmhlYWxhYi5uZWFyIn0seyJwb29sX2lkIjo1OTQ5LCJ0b2tlbl9pbiI6InRva2VuLnJoZWFsYWIubmVhciIsInRva2VuX291dCI6IjE3MjA4NjI4Zjg0ZjVkNmFkMzNmMGRhM2JiYmViMjdmZmNiMzk4ZWFjNTAxYTMxYmQ2YWQyMDExZTM2MTMzYTEifSx7InBvb2xfaWQiOjU0NzAsInRva2VuX2luIjoiMTcyMDg2MjhmODRmNWQ2YWQzM2YwZGEzYmJiZWIyN2ZmY2IzOThlYWM1MDFhMzFiZDZhZDIwMTFlMzYxMzNhMSIsInRva2VuX291dCI6ImJsYWNrZHJhZ29uLnRrbi5uZWFyIn1dfSx7ImFtb3VudF9pbiI6IjI1MDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImhvcHMiOlt7InBvb2xfaWQiOjQ2NjMsInRva2VuX2luIjoid3JhcC5uZWFyIiwidG9rZW5fb3V0IjoiZnR2Mi5uZWtvdG9rZW4ubmVhciJ9LHsicG9vbF9pZCI6NDg4NywidG9rZW5faW4iOiJmdHYyLm5la290b2tlbi5uZWFyIiwidG9rZW5fb3V0IjoiZGFjMTdmOTU4ZDJlZTUyM2EyMjA2MjA2OTk0NTk3YzEzZDgzMWVjNy5mYWN0b3J5LmJyaWRnZS5uZWFyIn0seyJwb29sX2lkIjo0MTgwLCJ0b2tlbl9pbiI6ImRhYzE3Zjk1OGQyZWU1MjNhMjIwNjIwNjk5NDU5N2MxM2Q4MzFlYzcuZmFjdG9yeS5icmlkZ2UubmVhciIsInRva2VuX291dCI6ImJsYWNrZHJhZ29uLnRrbi5uZWFyIn1dfV19fSwidG9rZW5faW4iOiJ3cmFwLm5lYXIiLCJ0b2tlbl9vdXQiOiJibGFja2RyYWdvbi50a24ubmVhciIsImFtb3VudF9pbiI6IjEwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJtaW5fb3V0IjoiMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwIiwiZmVlX2JwcyI6NTAsInJlZmVycmVyIjpudWxsfQDAbjHZEAEAAAAAAAAAAAAAAAAAAAAAAA==",
+ "hash": "CWxFUsM24V5KxiBpsVtE3DvMAwbQ9Be3bkCkPiYpGx6f",
+ "signed_base64": "DwAAAGFnZW50LWRlbW8ubmVhcgDjovWw1MxGE5KSyFNHf9xA5hiHAtvc0Sh3jwH3Sw0c6bpINVUqAAAADwAAAG5la29vcmRlcnMubmVhcrQ8XxSupf9BVNi/v4rZ7KAzJwUwgIGkteBreyM19oZLAQAAAAIFAAAAdHJhZGVBBQAAeyJ2ZW51ZSI6eyJSaGVhIjp7InJvdXRlIjpbeyJhbW91bnRfaW4iOiI0MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJob3BzIjpbeyJwb29sX2lkIjo0NTEyLCJ0b2tlbl9pbiI6IndyYXAubmVhciIsInRva2VuX291dCI6IjE3MjA4NjI4Zjg0ZjVkNmFkMzNmMGRhM2JiYmViMjdmZmNiMzk4ZWFjNTAxYTMxYmQ2YWQyMDExZTM2MTMzYTEifSx7InBvb2xfaWQiOjM0MzMsInRva2VuX2luIjoiMTcyMDg2MjhmODRmNWQ2YWQzM2YwZGEzYmJiZWIyN2ZmY2IzOThlYWM1MDFhMzFiZDZhZDIwMTFlMzYxMzNhMSIsInRva2VuX291dCI6InVzZHQudGV0aGVyLXRva2VuLm5lYXIifSx7InBvb2xfaWQiOjQxNzksInRva2VuX2luIjoidXNkdC50ZXRoZXItdG9rZW4ubmVhciIsInRva2VuX291dCI6ImJsYWNrZHJhZ29uLnRrbi5uZWFyIn1dfSx7ImFtb3VudF9pbiI6IjM1MDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImhvcHMiOlt7InBvb2xfaWQiOjM4NzksInRva2VuX2luIjoid3JhcC5uZWFyIiwidG9rZW5fb3V0IjoidG9rZW4ucmhlYWxhYi5uZWFyIn0seyJwb29sX2lkIjo1OTQ5LCJ0b2tlbl9pbiI6InRva2VuLnJoZWFsYWIubmVhciIsInRva2VuX291dCI6IjE3MjA4NjI4Zjg0ZjVkNmFkMzNmMGRhM2JiYmViMjdmZmNiMzk4ZWFjNTAxYTMxYmQ2YWQyMDExZTM2MTMzYTEifSx7InBvb2xfaWQiOjU0NzAsInRva2VuX2luIjoiMTcyMDg2MjhmODRmNWQ2YWQzM2YwZGEzYmJiZWIyN2ZmY2IzOThlYWM1MDFhMzFiZDZhZDIwMTFlMzYxMzNhMSIsInRva2VuX291dCI6ImJsYWNrZHJhZ29uLnRrbi5uZWFyIn1dfSx7ImFtb3VudF9pbiI6IjI1MDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImhvcHMiOlt7InBvb2xfaWQiOjQ2NjMsInRva2VuX2luIjoid3JhcC5uZWFyIiwidG9rZW5fb3V0IjoiZnR2Mi5uZWtvdG9rZW4ubmVhciJ9LHsicG9vbF9pZCI6NDg4NywidG9rZW5faW4iOiJmdHYyLm5la290b2tlbi5uZWFyIiwidG9rZW5fb3V0IjoiZGFjMTdmOTU4ZDJlZTUyM2EyMjA2MjA2OTk0NTk3YzEzZDgzMWVjNy5mYWN0b3J5LmJyaWRnZS5uZWFyIn0seyJwb29sX2lkIjo0MTgwLCJ0b2tlbl9pbiI6ImRhYzE3Zjk1OGQyZWU1MjNhMjIwNjIwNjk5NDU5N2MxM2Q4MzFlYzcuZmFjdG9yeS5icmlkZ2UubmVhciIsInRva2VuX291dCI6ImJsYWNrZHJhZ29uLnRrbi5uZWFyIn1dfV19fSwidG9rZW5faW4iOiJ3cmFwLm5lYXIiLCJ0b2tlbl9vdXQiOiJibGFja2RyYWdvbi50a24ubmVhciIsImFtb3VudF9pbiI6IjEwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJtaW5fb3V0IjoiMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwIiwiZmVlX2JwcyI6NTAsInJlZmVycmVyIjpudWxsfQDAbjHZEAEAAAAAAAAAAAAAAAAAAAAAAAAvsMeRqoUngjCzklL28CCPGG11indvX2g5t/xCdIr8usk7aPgDyUWFTwMv7m3ToJ2IhuOLHsAWVJ0FBsRnZU0G"
+}

@@ -1,0 +1,20 @@
+{
+ "note": "Generated with near-api-js 5.1.1 (the bundle the Terminal signs with): createTransaction + functionCall + SignedTransaction.encode. A nonce above 2^32 and 2^53 (2^60 + 987654321).",
+ "secret_key": "ed25519:2K5t4gfxE4JDth1vyNDnBp3SRjrt3ZjsZt7pzuYtkz5vdFN9bNr8B6FHmeNgFYXS1aoH62RNcNB5YNUXTT3rpj4k",
+ "public_key": "ed25519:GKbfrDY8dWpUu7J1Qem2q9wkYLupqLqqPwBc893YzD8C",
+ "signer_id": "agent-demo.near",
+ "receiver_id": "nekoorders.near",
+ "nonce": "1152921505594501297",
+ "block_hash": "8KCTECBPD4QaSVwhz4iKuFExAkXy5uRL3oehdjgA4gZD",
+ "method_name": "withdraw",
+ "args": {
+  "token": "wrap.near",
+  "amount": null
+ },
+ "gas": "150000000000000",
+ "deposit": "0",
+ "args_bytes": 35,
+ "tx_base64": "DwAAAGFnZW50LWRlbW8ubmVhcgDjovWw1MxGE5KSyFNHf9xA5hiHAtvc0Sh3jwH3Sw0c6bFo3joAAAAQDwAAAG5la29vcmRlcnMubmVhcmyrNkt1zqATRA3OXWYPRj0MxJWPc2LPzqonXzDmvTmwAQAAAAIIAAAAd2l0aGRyYXcjAAAAeyJ0b2tlbiI6IndyYXAubmVhciIsImFtb3VudCI6bnVsbH0AYLeYbIgAAAAAAAAAAAAAAAAAAAAAAAA=",
+ "hash": "CUZcPeYXxGVdqVxuSRqdM1sVQMsVbgeKuHJ4PVVP2Wzt",
+ "signed_base64": "DwAAAGFnZW50LWRlbW8ubmVhcgDjovWw1MxGE5KSyFNHf9xA5hiHAtvc0Sh3jwH3Sw0c6bFo3joAAAAQDwAAAG5la29vcmRlcnMubmVhcmyrNkt1zqATRA3OXWYPRj0MxJWPc2LPzqonXzDmvTmwAQAAAAIIAAAAd2l0aGRyYXcjAAAAeyJ0b2tlbiI6IndyYXAubmVhciIsImFtb3VudCI6bnVsbH0AYLeYbIgAAAAAAAAAAAAAAAAAAAAAAAAAmHODzIXw/WY9F9uuqcnn0U6Q2H7uaUTaTtCEU8YDck/WARHJ4ToqGnO8krJvT9h/vBOcULjrK20Bahixacc+DA=="
+}

@@ -1,24 +1,31 @@
 // The kit signs without near-api-js (its 5.1.1 bundle pulls in a native secp256k1 module). Its transaction bytes,
 // hash and signed bytes are checked here against a vector made with near-api-js 5.1.1 itself, the bundle the
-// Terminal signs with (test/fixtures/sign-vector.json). The vector's key is a fixed test key that holds nothing.
+// Terminal signs with (test/fixtures/sign-vector*.json: a one-leg trade, a long args payload, a nonce above 2^32;
+// test/make-sign-vectors.cjs made the last two). The vectors' key is a fixed test key that holds nothing.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { encodeTransaction, encodeSigned, b58decode, b58encode, publicKeyBytes } from "../dist/index.js";
 import { fixture } from "./helpers.mjs";
 
-const v = fixture("sign-vector.json");
+for (const [file, what] of [["sign-vector.json", "a one-leg trade"], ["sign-vector-long-args.json", "a long args payload"], ["sign-vector-big-nonce.json", "a nonce above 2^32"]]) {
+  test(`transaction bytes, hash and signed bytes match near-api-js 5.1.1: ${what}`, async () => {
+    const v = fixture(file);
+    const { signBytes } = await import("../dist/keys.js");
+    const key = { accountId: v.signer_id, publicKey: v.public_key, secretKey: v.secret_key };
+    const tx = encodeTransaction({ signerId: v.signer_id, publicKey: publicKeyBytes(v.public_key), nonce: BigInt(v.nonce), receiverId: v.receiver_id,
+      blockHash: b58decode(v.block_hash), methodName: v.method_name, args: new TextEncoder().encode(JSON.stringify(v.args)), gas: BigInt(v.gas), deposit: BigInt(v.deposit) });
+    assert.equal(Buffer.from(tx).toString("base64"), v.tx_base64);
+    const hash = createHash("sha256").update(tx).digest();
+    assert.equal(b58encode(hash), v.hash);
+    const signed = encodeSigned(tx, signBytes(key, hash));
+    assert.equal(Buffer.from(signed).toString("base64"), v.signed_base64);
+  });
+}
 
-test("transaction bytes, hash and signed bytes match near-api-js 5.1.1", async () => {
-  const { signBytes } = await import("../dist/keys.js");
-  const key = { accountId: v.signer_id, publicKey: v.public_key, secretKey: v.secret_key };
-  const tx = encodeTransaction({ signerId: v.signer_id, publicKey: publicKeyBytes(v.public_key), nonce: BigInt(v.nonce), receiverId: v.receiver_id,
-    blockHash: b58decode(v.block_hash), methodName: v.method_name, args: new TextEncoder().encode(JSON.stringify(v.args)), gas: BigInt(v.gas), deposit: BigInt(v.deposit) });
-  assert.equal(Buffer.from(tx).toString("base64"), v.tx_base64);
-  const hash = createHash("sha256").update(tx).digest();
-  assert.equal(b58encode(hash), v.hash);
-  const signed = encodeSigned(tx, signBytes(key, hash));
-  assert.equal(Buffer.from(signed).toString("base64"), v.signed_base64);
+test("the long vector's args take a two-byte borsh length, the big nonce is above 2^53", () => {
+  assert.ok(fixture("sign-vector-long-args.json").args_bytes > 255);
+  assert.ok(BigInt(fixture("sign-vector-big-nonce.json").nonce) > 2n ** 53n);
 });
 
 test("base58 round trip, leading zeros kept", () => {

@@ -193,6 +193,43 @@ test("v1.6: a balance held at the other exchange is moved first with a Shift, th
   assert.equal(w.sent[1].args.venue.Rhea.route.length > 0, true);
 });
 
+test("v1.6: blocked after a Shift went through says the balance moved, as a refused result does", async () => {
+  const w = world({ balances: { "wrap.near": { here: 0n, rhea: 0n, intear: 2n * NEAR } }, send: ({ args }, n) => (n === 1
+    ? txOutcome("SHIFT", [{ event: "trading_shift", data: { id: "8", owner: "agent-demo.near", token: "wrap.near", from: "intear", to: "rhea", amount: args.amount_in, moved: args.amount_in, ok: true } }])
+    : txOutcome("CAP", [], { ActionError: { kind: { FunctionCallError: { ExecutionError: "Smart contract panicked: Above the per-trade cap" } } } })) });
+  const r = await (await w.open()).buy("usdc", "1");
+  shape(r);
+  assert.equal(r.outcome, "blocked");
+  assert.match(r.reason, /per-trade cap/);
+  assert.match(r.reason, /the trade wasn't sent; a move of the 1-click balance between the contract and the exchange had already gone through: see get_balance/);
+  assert.equal(r.policy_checks.at(-1).rule, "contract_caps");
+  // without a Shift, the same block says nothing of a move
+  const w2 = world({ send: () => txOutcome("CAP", [], { ActionError: { kind: { FunctionCallError: { ExecutionError: "Smart contract panicked: Above the per-trade cap" } } } }) });
+  const r2 = await (await w2.open()).buy("usdc", "1");
+  assert.equal(r2.outcome, "blocked");
+  assert.doesNotMatch(r2.reason, /already gone through/);
+});
+
+test("previewTrade (policy check): the same rules as a trade, nothing signed, the ledger used only when named", async () => {
+  const w = world();
+  const a = await w.open();
+  const big = await a.previewTrade("buy", "usdc", "5", { policyFile: w.policyFile, account: "agent-demo.near" });
+  assert.equal(big.outcome, "blocked");
+  assert.equal(big.policy_checks.find((c) => c.status === "fail").rule, "max_trade_near");
+  assert.deepEqual(big.policy_checks.map((c) => c.rule), ["paused", "deny_list", "score_floor", "max_trade_near", "daily_budget_near", "cooldown_sec", "contract_caps"]);
+  const ok = await a.previewTrade("buy", "usdc", "1", { policyFile: w.policyFile });
+  assert.equal(ok.outcome, "would pass");
+  assert.equal(ok.score, 88);
+  assert.equal(ok.account, null);
+  assert.equal(w.sent.length, 0);
+  // after a trade, the named ledger's cool-down blocks the next one; an empty ledger does not
+  const w2 = world({ send: () => txOutcome("FILL", [tradeEv({})]) });
+  const b = await w2.open();
+  assert.equal((await b.buy("usdc", "1")).outcome, "filled");
+  assert.equal((await b.previewTrade("buy", "usdc", "1", { policyFile: w2.policyFile, account: "agent-demo.near" })).policy_checks.find((c) => c.status === "fail").rule, "cooldown_sec");
+  assert.equal((await b.previewTrade("buy", "usdc", "1", { policyFile: w2.policyFile })).outcome, "would pass");
+});
+
 test("a sell of 50% sells half the balance and is not blocked by a bad score", async () => {
   const w = world({ policy: { daily_budget_near: 10 }, safety: () => ({ score: 3, verdict: "high risk", findings: [], checked_at: "x", note: "" }), send: () => txOutcome("S", [tradeEv({ token_in: USDC, token_out: "wrap.near", amount_in: "25000000", amount_out: "5000000000000000000000000", fee_amount: "25000000000000000000000" })]) });
   const r = await (await w.open()).sell("usdc", "50%");

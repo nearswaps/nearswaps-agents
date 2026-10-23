@@ -4,7 +4,7 @@
 import { GAS_RECOVER, GAS_WITHDRAW, NEAR, POOL_LIST_URL, RESERVE_PER_TGAS, SYMBOLS, TGAS, WNEAR } from "./constants.js";
 import { amountText, short, toRaw, units } from "./format.js";
 import { checkPermission, isAccountId, loadKey, type AgentKey } from "./keys.js";
-import { ledgerPath, Ledger, loadPolicy, policyPath, runChecks, type Policy, type PolicyCheck } from "./policy.js";
+import { ledgerPath, Ledger, loadPolicy, policyPath, policyStatus, runChecks, type Policy, type PolicyCheck } from "./policy.js";
 import { PoolSource } from "./pools.js";
 import { feeBpsAsked, feeBpsCharged, Market, minOutFor, quote, resolveSlippage, VENUE_NAMES, type Quote, type Slippage, type VenueName } from "./quote.js";
 import { Reads, type TokenCheck } from "./reads.js";
@@ -104,6 +104,26 @@ export class Kit {
   listTopTraders() { return this.reads.traders(); }
   getWallet(id: string) { return this.reads.wallet(id); }
 
+  /** Any account's 1-click balance (get_trading), with where each part sits (v1.6), and the wallet's own free NEAR
+   * for gas. Public views: no key. */
+  async getBalanceOf(account: string) {
+    if (!isAccountId(account)) throw new Error(`"${account}" is not a NEAR account id`);
+    const [list, parts, free] = await Promise.all([this.views.getTrading(account), this.views.getTradingParts(account).catch(() => [] as TradingParts[]), this.views.walletFree(account)]);
+    const rows = [];
+    for (const b of list || []) {
+      const m = await this.tokenMeta(b.token).catch(() => ({ symbol: b.token, decimals: 24 }));
+      const p = (parts || []).find((x) => x.token === b.token);
+      rows.push({ token: b.token, amount: amountText(BigInt(b.amount), m.decimals, m.symbol), raw: b.amount, ...(p ? { here: p.here, rhea: p.rhea, intear: p.intear } : {}) });
+    }
+    return { account, balances: rows, wallet_free: free == null ? null : amountText(free > 0n ? free : 0n, 24, "NEAR") };
+  }
+  /** Any account's trades, deposits and withdrawals still in flight or parked (get_pending). Public view: no key. */
+  async getPendingOf(account: string) {
+    if (!isAccountId(account)) throw new Error(`"${account}" is not a NEAR account id`);
+    const list = await this.views.getPending(account);
+    return (list || []).map((p) => ({ ...p, unclear: Number(p.stage) === 99, recoverable_at: Number(p.recoverable_ns) > 0 ? new Date(Number(BigInt(p.recoverable_ns) / 1000000n)).toISOString() : "now" }));
+  }
+
   /** A 1-click quote: NEAR to a token or a token to NEAR, on the venue 1-click would use, with min_out from the
    * slippage (default 5%) and the 1-click fee. Read-only. */
   async getQuote(from: string, to: string, amount: string | number, opts: { slippage?: Slippage; account?: string } = {}): Promise<QuoteResult> {
@@ -130,6 +150,50 @@ export class Kit {
       raw: { amount_in: raw.toString(), out: q.out.toString(), min_out: minOut.toString(), fee: fee.toString() },
     };
   }
+
+  /** A dry run of the policy for a buy or a sell: the same rules, in the same order, as a trade runs them, with
+   * nothing signed and no key. With an account, today's spend and the cool-downs come from its ledger; without one
+   * the ledger is empty. The 1-click balance and the wallet's gas reserve are checked only when the trade runs. */
+  async previewTrade(side: "buy" | "sell", tokenArg: string, amountArg: string | number, opts: { policyFile: string; account?: string | null }): Promise<PreviewResult> {
+    const token = this.resolveToken(tokenArg);
+    if (token === WNEAR) throw new Error("pick the token to trade against NEAR, not NEAR itself");
+    const policy = loadPolicy(opts.policyFile);
+    const account = opts.account || null;
+    const ledger = new Ledger(account ? ledgerPath(opts.policyFile, account) : null, account || "", this.now);
+    const market = await this.market(token);
+    const cfg = market.cfg, venueName = market.venueOf(token), wanted = market.venueWanted(token);
+    if (wanted !== "rhea" && wanted !== "intear") throw new Error(`${token} trades on ${VENUE_NAMES[wanted]}; the kit trades on Rhea and Intear DEX only`);
+    if (!venueName) throw new Error(`${token} isn't switched on for 1-click yet`);
+    const tIn = side === "buy" ? WNEAR : token, tOut = side === "buy" ? token : WNEAR;
+    const mIn = await this.tokenMeta(tIn);
+    const raw = toRaw(amountArg, mIn.decimals);
+    if (!raw) throw new Error(side === "buy" ? `"${amountArg}" is not a NEAR amount` : `"${amountArg}" is not an amount of ${mIn.symbol} (a dry run takes a number, not a percent or "all")`);
+    let nearRaw = raw;
+    if (side === "sell") {
+      const q = await quote({ rpc: this.rpc, fetch: this.fetchFn, pools: this.pools }, market, tIn, tOut, raw, venueName);
+      if (!q) throw new Error(`no route 1-click can use for ${token} right now`);
+      nearRaw = q.out;
+    }
+    const near = Number(units(nearRaw, 24));
+    const run = await runChecks(policy, ledger, { side, token, near, nearRaw, score: () => this.reads.checkToken(token),
+      contract: { paused: cfg.paused, trade_paused: cfg.trade_paused, max_trade_wnear: BigInt(cfg.max_trade_wnear || "0"), max_trading_wnear: BigInt(cfg.max_trading_wnear || "0") } }, this.now);
+    return { outcome: run.blocked ? "blocked" : "would pass", reason: run.blocked ? run.blocked.detail : "every policy rule passes; the 1-click balance and the gas reserve are checked when the trade runs",
+      side, token, near: amountText(nearRaw, 24, "NEAR"), account, score: run.score, policy_checks: run.checks };
+  }
+}
+
+/** previewTrade's answer: what the policy would say, nothing signed. */
+export interface PreviewResult {
+  outcome: "would pass" | "blocked";
+  reason: string;
+  side: "buy" | "sell";
+  token: string;
+  /** The NEAR the trade spends (buy) or is expected to bring back (sell). */
+  near: string;
+  /** The ledger used, or null (empty ledger). */
+  account: string | null;
+  score: number | null;
+  policy_checks: PolicyCheck[];
 }
 
 export interface AgentOptions extends KitOptions {
@@ -147,12 +211,17 @@ type Loc = "here" | "rhea" | "intear";
 
 class KitRefusal extends Error { constructor(readonly check: PolicyCheck) { super(check.detail); } }
 
+/** Said on any result that stops after a Venue::Shift went through: the balance sits elsewhere than before. */
+const movedNote = (what: string) => ` (the ${what} wasn't sent; a move of the 1-click balance between the contract and the exchange had already gone through: see get_balance)`;
+
 export class Agent extends Kit {
   readonly accountId: string;
   readonly key: AgentKey;
   readonly signer: Signer;
   readonly policyFile: string;
   private allowance: bigint | null = null;
+  /** Venue::Shift calls that completed, so a call that stops later can say the balance moved. */
+  private shifts = 0;
   private discount: number | null = null;
   private started = false;
 
@@ -199,27 +268,11 @@ export class Agent extends Kit {
   // ------------------------------------------------------------------ reads with the owner's account
 
   /** The 1-click balance (get_trading), with where each part sits (v1.6), and the wallet's own free NEAR for gas. */
-  async getBalance() {
-    const [list, parts, free] = await Promise.all([this.views.getTrading(this.accountId), this.views.getTradingParts(this.accountId).catch(() => [] as TradingParts[]), this.views.walletFree(this.accountId)]);
-    const rows = [];
-    for (const b of list || []) {
-      const m = await this.tokenMeta(b.token).catch(() => ({ symbol: b.token, decimals: 24 }));
-      const p = (parts || []).find((x) => x.token === b.token);
-      rows.push({ token: b.token, amount: amountText(BigInt(b.amount), m.decimals, m.symbol), raw: b.amount, ...(p ? { here: p.here, rhea: p.rhea, intear: p.intear } : {}) });
-    }
-    return { account: this.accountId, balances: rows, wallet_free: free == null ? null : amountText(free > 0n ? free : 0n, 24, "NEAR") };
-  }
+  getBalance() { return this.getBalanceOf(this.accountId); }
   /** Trades, deposits and withdrawals still in flight or parked (get_pending). */
-  async getPending() {
-    const list = await this.views.getPending(this.accountId);
-    return (list || []).map((p) => ({ ...p, unclear: Number(p.stage) === 99, recoverable_at: Number(p.recoverable_ns) > 0 ? new Date(Number(BigInt(p.recoverable_ns) / 1000000n)).toISOString() : "now" }));
-  }
+  getPending() { return this.getPendingOf(this.accountId); }
   /** The policy as it runs, today's spend (UTC) and what is left. */
-  getPolicy() {
-    const { policy, ledger } = this.policyAndLedger();
-    const spent = ledger.spentToday();
-    return { file: this.policyFile, policy, today_utc: new Date(this.now()).toISOString().slice(0, 10), spent_today_near: +spent.toFixed(6), left_today_near: +Math.max(0, policy.daily_budget_near - spent).toFixed(6), trades_today: ledger.entriesToday() };
-  }
+  getPolicy() { return policyStatus(this.policyFile, this.accountId, this.now); }
 
   // ------------------------------------------------------------------ money
 
@@ -260,6 +313,7 @@ export class Agent extends Kit {
     const res = await this.signer.keyCall("trade", args, BigInt(gasT) * TGAS);
     const ev = events(res).find((x) => x.event === "trading_shift" && x.data && x.data.owner === this.accountId);
     if (!ev || !ev.data.ok) throw new Error(`moving the ${token} balance didn't complete; it is still in the 1-click balance. Try again in a moment`);
+    this.shifts++;
   }
 
   /** Put a trade's input where the trade takes it (oneclick.js placeInput). Returns whether anything moved. */
@@ -280,7 +334,8 @@ export class Agent extends Kit {
 
   private async trade(side: "buy" | "sell", tokenArg: string, amountArg: string | number, opts: { slippage?: Slippage }): Promise<MoneyResult> {
     const checks: PolicyCheck[] = [];
-    let score: number | null = null, ledger: Ledger | null = null, entry: string | null = null, shifted = false;
+    let score: number | null = null, ledger: Ledger | null = null, entry: string | null = null;
+    const shifts0 = this.shifts, shifted = () => this.shifts > shifts0;
     const blockedBy = (c: PolicyCheck) => result("blocked", c.detail, { policy_checks: [...checks, c], score });
     try {
       if (!this.started) await this.start();
@@ -334,7 +389,7 @@ export class Agent extends Kit {
       const auto = (opts.slippage ?? policy.slippage_bps) === "auto";
       for (let attempt = 1; ; attempt++) {
         // v1.6: the input must sit where the trade takes it (at the exchange or in the contract); moved there first if not.
-        if (await this.placeInput(tIn, raw, q.venue, market)) { shifted = true; q = await quote(deps, market, tIn, tOut, raw, venueName); }
+        if (await this.placeInput(tIn, raw, q.venue, market)) q = await quote(deps, market, tIn, tOut, raw, venueName);
         if (!q) throw new Error(`no route 1-click can use for ${token} right now`);
         slip = resolveSlippage(opts.slippage ?? policy.slippage_bps, q, side === "buy" ? raw : q.out, open);
         const minOut = minOutFor(q.floor, slip);
@@ -374,9 +429,9 @@ export class Agent extends Kit {
     } catch (e) {
       if (e instanceof KitRefusal) {
         if (ledger && entry) ledger.settle(entry, "refused", null);
-        return result("blocked", e.check.detail, { policy_checks: [...checks, e.check], score });
+        return result("blocked", e.check.detail + (shifted() ? movedNote("trade") : ""), { policy_checks: [...checks, e.check], score });
       }
-      return this.failure(e, checks, score, ledger, entry, shifted);
+      return this.failure(e, checks, score, ledger, entry, shifted() ? "trade" : null);
     }
   }
 
@@ -403,7 +458,8 @@ export class Agent extends Kit {
     return result("pending", "sent; it is still settling. Follow it with get_pending; if it stops, it shows there with a recover time an hour later. Don't send it again", { tx, amount_in: amountIn, score, policy_checks: checks });
   }
 
-  private failure(e: unknown, checks: PolicyCheck[], score: number | null, ledger: Ledger | null, entry: string | null, shifted: boolean): MoneyResult {
+  /** `shifted`: what wasn't sent ("trade", "withdrawal") when a Venue::Shift had already gone through, else null. */
+  private failure(e: unknown, checks: PolicyCheck[], score: number | null, ledger: Ledger | null, entry: string | null, shifted: string | null): MoneyResult {
     const err = e as any, m = clean(e);
     if (err && err.settling) { if (ledger && entry) ledger.settle(entry, "pending", err.hash || null); return result("pending", m, { tx: err.hash || null, score, policy_checks: checks }); }
     if (err && err.onchain) {
@@ -414,7 +470,7 @@ export class Agent extends Kit {
       return result("refused", "the contract refused it before anything moved: " + m, { tx: hashOf(err.res) || null, score, policy_checks: checks });
     }
     if (ledger && entry) ledger.settle(entry, "refused", null);
-    const moved = shifted ? " (the trade wasn't sent; a move of the 1-click balance between the contract and the exchange had already gone through: see get_balance)" : "";
+    const moved = shifted ? movedNote(shifted) : "";
     return result("refused", (/nothing was sent/.test(m) ? m : m + "; nothing was sent") + moved, { score, policy_checks: checks });
   }
 
@@ -422,6 +478,7 @@ export class Agent extends Kit {
    * contract pays the caller only; there is no recipient anywhere. wNEAR arrives as NEAR. Always allowed. */
   async withdraw(tokenArg = "near", amountArg?: string | number): Promise<MoneyResult> {
     const checks: PolicyCheck[] = [kitCheck("withdraw_to_owner", true, `the contract pays ${this.accountId} only: withdraw has no recipient argument`)];
+    const shifts0 = this.shifts, shifted = () => this.shifts > shifts0;
     try {
       if (!this.started) await this.start();
       let token: string;
@@ -450,8 +507,8 @@ export class Agent extends Kit {
       if (!ev) return result("pending", "sent; if it doesn't arrive, it shows in get_pending with a recover time an hour later", { tx, amount_in: amt, policy_checks: checks });
       return result("filled", `${m.symbol} sent to ${this.accountId}${token === WNEAR ? " as NEAR" : ""}`, { tx, amount_in: amt, amount_out: amt, policy_checks: checks });
     } catch (e) {
-      if (e instanceof KitRefusal) return result("blocked", e.check.detail, { policy_checks: [...checks, e.check] });
-      return this.failure(e, checks, null, null, null, false);
+      if (e instanceof KitRefusal) return result("blocked", e.check.detail + (shifted() ? movedNote("withdrawal") : ""), { policy_checks: [...checks, e.check] });
+      return this.failure(e, checks, null, null, null, shifted() ? "withdrawal" : null);
     }
   }
 
@@ -493,7 +550,7 @@ export class Agent extends Kit {
       return result("pending", "sent; the 1-click balance shows the result in a moment (get_pending)", { tx, policy_checks: checks });
     } catch (e) {
       if (e instanceof KitRefusal) return stop(e.check);
-      return this.failure(e, checks, null, null, null, false);
+      return this.failure(e, checks, null, null, null, null);
     }
   }
 }

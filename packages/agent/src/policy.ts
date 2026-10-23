@@ -97,9 +97,10 @@ const COUNTS = new Set<EntryOutcome>(["sending", "filled", "unclear", "pending"]
 
 export class Ledger {
   private data: LedgerFile;
-  constructor(readonly file: string, readonly account: string, private now: () => number = Date.now) {
+  /** `file` null: an empty ledger kept in memory only (a dry run with no account). */
+  constructor(readonly file: string | null, readonly account: string, private now: () => number = Date.now) {
     this.data = { version: 1, account, days: {}, last: {} };
-    if (existsSync(file)) {
+    if (file && existsSync(file)) {
       try {
         const j = JSON.parse(readFileSync(file, "utf8"));
         if (j && j.version === 1 && j.account === account && j.days && j.last) this.data = j;
@@ -108,6 +109,7 @@ export class Ledger {
     }
   }
   private save() {
+    if (!this.file) return;
     // Days older than 30 are dropped; the cool-down times stay.
     const keep = utcDay(this.now() - 30 * 86400_000);
     for (const d of Object.keys(this.data.days)) if (d < keep) delete this.data.days[d];
@@ -145,6 +147,17 @@ export class Ledger {
       return;
     }
   }
+}
+
+/** The policy as it runs: the file, today's spend (UTC) and what is left. With no account, the policy alone (the ledger
+ * is per account). Reads local files only: no key, no network. */
+export function policyStatus(policyFile: string, account: string | null, now: () => number = Date.now) {
+  const policy = loadPolicy(policyFile);
+  const base = { file: policyFile, policy, today_utc: utcDay(now()) };
+  if (!account) return { ...base, account: null, spent_today_near: null, left_today_near: null, trades_today: [] as LedgerEntry[] };
+  const ledger = new Ledger(ledgerPath(policyFile, account), account, now);
+  const spent = ledger.spentToday();
+  return { ...base, account, spent_today_near: +spent.toFixed(6), left_today_near: +Math.max(0, policy.daily_budget_near - spent).toFixed(6), trades_today: ledger.entriesToday() };
 }
 
 // ------------------------------------------------------------------ the checks

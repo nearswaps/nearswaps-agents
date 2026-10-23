@@ -1,0 +1,45 @@
+{
+  "name": "@nearswaps/agent-mcp",
+  "version": "0.1.0",
+  "description": "MCP server (stdio) for AI agents trading NEAR tokens on nearswaps through the nekoorders.near 1-click contract, under hard limits on chain and a policy file. --read-only runs with no key and no money tools.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
+    }
+  },
+  "bin": {
+    "nearswaps-agent-mcp": "dist/bin.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node test/run.mjs"
+  },
+  "keywords": [
+    "near",
+    "agent",
+    "mcp",
+    "trading",
+    "nearswaps"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@nearswaps/agent": "0.1.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "typescript": "^5.6.0"
+  }
+}
