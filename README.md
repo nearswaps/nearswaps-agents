@@ -283,6 +283,74 @@ money call returns one shape and never throws: `outcome` (`filled`, `refused`, `
 `reason`, `tx`, amounts, `fee`, `score` and every check. Each key-signed call is signed once and sent once, then followed
 by its hash, so a trade can't happen twice. Details: [docs/reference.md](docs/reference.md).
 
+## A scripted agent
+
+[examples/trench-bot.mjs](examples/trench-bot.mjs) is an agent written on the SDK, the one in the demo video. It
+lists the launches of the last day across Shards, Nearly, JustHoot and Intear, runs the token check on at most 10 of
+them (one at a time, the 60 s cache answering repeats), prints one line per token, buys the best one the policy
+allows with the agent key, then tries the lowest-scoring one at the same amount so a refusal shows on screen, and
+ends with the 1-click balance.
+
+```bash
+node examples/trench-bot.mjs --dry-run --account <account> --token blackdragon --refuse tear
+```
+
+`--dry-run` loads no key and signs nothing: each buy becomes a dry run of the policy (the same rules, in the same
+order), printed as `would pass` or `blocked`. Without it the buys are real and need `--account` and the agent key.
+Flags: `--since <minutes>` (default 1440), `--amount <NEAR>` (default 0.2), `--token <id>` and `--refuse <id>` to
+choose the buy and the refusal instead of the launch list, `--policy <file>`, `--color`.
+
+Most new launches are Nearly and JustHoot tokens on Rhea DCL, which the kit reads but does not trade (it trades on
+Rhea and Intear DEX), so on a day with no Rhea or Intear launch the bot finds nothing to buy and its refusal is the
+kit's venue check, not the policy. `--token` and `--refuse` are for that day. The output of a dry run on 27 Oct 2026
+with the example policy (trimmed where marked):
+
+```text
+mode: dry run (no key loaded; nothing signed)
+policy: ~/.nearswaps-agent/policy.json
+score floor: 70
+per-trade maximum: 1 NEAR
+amount per buy: 0.2 NEAR
+launches in the last 1440 minutes: 40
+token checks this run: 10 (at most 10)
+token: blackdragon.tkn.near | launchpad chosen | age chosen | liquidity n/a | score 80 | verdict caution | 1-click yes
+token: token.intear.near | launchpad chosen | age chosen | liquidity n/a | score 50 | verdict caution | 1-click yes
+token: nearvember.nearlytrade.near | launchpad nearly | age 16h 24m | liquidity 94.91 NEAR | score 60 | verdict caution | 1-click no
+token: nateriver.nearlytrade.near | launchpad nearly | age 13h 7m | liquidity 38.17 NEAR | score 40 | verdict high risk | 1-click no
+(six more Nearly rows, scores 20, 1-click no)
+buy: blackdragon.tkn.near (score 80)
+side: buy
+token: blackdragon.tkn.near
+near: 0.2 NEAR
+outcome: would pass
+reason: every policy rule passes; the 1-click balance and the gas reserve are checked when the trade runs
+score: 80
+signed: nothing (a dry run)
+check paused: pass (the policy is not paused)
+check deny_list: pass (not on the deny list)
+check score_floor: pass (score 80 (caution) meets the floor of 70)
+check max_trade_near: pass (0.2 NEAR is within the per-trade maximum of 1 NEAR)
+check daily_budget_near: pass (0 NEAR traded today (UTC); 0.2 NEAR with this trade, within 3 NEAR)
+check cooldown_sec: pass (no earlier trade in blackdragon.tkn.near)
+check contract_caps: pass (within the contract's max_trade_wnear of 10000 NEAR; max_trading_wnear 10000 NEAR caps the 1-click balance at deposit)
+refusal test: token.intear.near (score 50)
+side: buy
+token: token.intear.near
+near: 0.2 NEAR
+outcome: blocked
+reason: score 50 (caution) is below the floor of 70
+score: 50
+signed: nothing (a dry run)
+check paused: pass (the policy is not paused)
+check deny_list: pass (not on the deny list)
+check score_floor: fail (score 50 (caution) is below the floor of 70)
+(the four rules after it: skip, an earlier rule blocked the trade)
+stopped by: score_floor (the policy)
+account: tome.near
+1-click balance: 22,028,439.14523 BLACKDRAGON
+wallet free for gas: 1.762108 NEAR
+```
+
 ## What the key can and cannot do
 
 Can, with its key and no human present:

@@ -12,5 +12,6 @@ export { Market, quote, autoSlip, minOutFor, feeBpsAsked, feeBpsCharged } from "
 export { plachPlan, plachRoutes, oneClickIntear } from "./intear.js";
 export { looksLikeNeko, type Launch } from "./launches.js";
 export { units, short, toRaw, amountText } from "./format.js";
+export { paint, checkLines, quoteLines, launchLines, balanceLines, pendingLines, policyLines, previewLines, moneyLines, type Tone } from "./lines.js";
 export { encodeTransaction, encodeSigned, b58encode, b58decode } from "./codec.js";
 export * as constants from "./constants.js";
