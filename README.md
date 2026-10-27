@@ -97,13 +97,14 @@ get_quote, check_token, list_new_launches, list_top_traders, get_wallet, get_bal
 Then ask:
 
 ```text
-Which NEAR tokens launched in the last hour, and what do they score?
+Which NEAR tokens launched in the last day, and what do they score?
 ```
 
-The agent calls `list_new_launches` (`since_minutes: 60`), then `check_token` for the launches it picks. Every tool
-answers in JSON. When this was run, the last-hour call returned `"launches": []` with all four sources (`nearly`,
-`hoot`, `intear`, `shards`) `"ok": true`: an empty hour is a valid answer, and a real one. The same list over 24
-hours, as the CLI prints it (three rows of a longer list):
+The agent calls `list_new_launches` (`since_minutes: 1440`), then `check_token` for the launches it picks. Every tool
+answers in JSON. Ask for a day, not an hour: in a read-only run on 27 Oct 2026 the last-hour call returned
+`"launches": []` (and so did the previous two hours) with all four sources (`nearly`, `hoot`, `intear`, `shards`)
+`"ok": true`. An empty window is a valid answer, and a real one. The 24-hour list, as the CLI prints it (three rows of
+a longer list):
 
 ```bash
 nearswaps-agent launches --since 24h --limit 3
@@ -115,6 +116,13 @@ launch: 2026-10-26T22:56:08Z nearly chicago.nearlytrade.near CHICAGO holders 0
 launch: 2026-10-26T22:52:12Z nearly neargemini.nearlytrade.near NEARGEMINI holders 3
 ```
 
+Claude Code and other Claude-based agents use the kit for research: scores, quotes, launches, balances. In a live test
+on 27 Oct 2026, Claude Code with the money-mode MCP server loaded declined to call `buy` or `sell` itself and used only
+the read tools. That is Claude's own policy, not a kit limit. The money tools (`buy`, `sell`, `withdraw`,
+`recover_trade`) exist for agents that do place trades, such as a Node script on the SDK or another agent runtime, and
+the same hard limits and policy apply to all of them. Claude-based agents can leave the buy, sell and withdraw calls to
+the owner's CLI. Codex placing trades has not been tested.
+
 Add `--json` to any CLI command for the raw result and `--color` for mint buys and red sells in a terminal that
 supports it. More options, every command and every tool: [docs/reference.md](docs/reference.md).
 
@@ -123,6 +131,11 @@ supports it. More options, every command and every tool: [docs/reference.md](doc
 Real mainnet runs by the owner (`tome.near`): a 0.1 NEAR buy (the first on 23 Oct 2026), a sell and a withdraw. The
 agent key was added with all three methods and the policy was the example below. The records are in
 [docs/runs](docs/runs).
+
+Who places the trades: the owner at the CLI (as in the runs below), or a scripted agent on the SDK. Claude Code, run
+with the money-mode MCP server loaded, declined to call `buy` or `sell` in a test on 27 Oct 2026 and kept to research
+with the read tools; that is Claude's own policy, not a kit limit. The same hard limits and policy apply to every
+caller.
 
 **Step 1. Make the agent key.** The agent makes its own key pair and prints only the public key; the pair stays in
 `~/.nearswaps-agent/<account>.json` (mode 600 on macOS and Linux).
