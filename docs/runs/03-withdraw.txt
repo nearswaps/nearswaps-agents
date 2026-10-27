@@ -1,0 +1,6 @@
+outcome: filled
+reason: NEAR sent to tome.near as NEAR
+amount in: 0.552718 NEAR
+amount out: 0.552718 NEAR
+tx: https://nearblocks.io/txns/HVs7G59awi7DQZ6Yt7TSF5hcyVxjRANbcvEjFiwv6bSs
+check withdraw_to_owner: pass (the contract pays tome.near only: withdraw has no recipient argument)

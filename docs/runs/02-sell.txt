@@ -1,0 +1,15 @@
+outcome: filled
+reason: sold blackdragon.tkn.near on Rhea
+amount in: 22,028,439.14523 BLACKDRAGON
+amount out: 0.032718 NEAR
+fee: 0.000082 NEAR
+tx: https://nearblocks.io/txns/E1JVrAa7qAFftCVZRfoLdyQiq5qetsiSdZRkPAL4Dbo3
+check venue: pass (trades on Rhea)
+check balance: pass (44,056,878.29046 BLACKDRAGON in the 1-click balance)
+check paused: pass (the policy is not paused)
+check deny_list: skip (not applied to sells)
+check score_floor: skip (not applied to sells)
+check max_trade_near: skip (not applied to sells)
+check daily_budget_near: pass (0 NEAR traded today (UTC); 0.0328 NEAR with this trade, within 3 NEAR)
+check cooldown_sec: pass (the last trade in blackdragon.tkn.near was more than 600 s ago)
+check contract_caps: pass (within the contract's max_trade_wnear of 10000 NEAR (a sell is valued at the expected NEAR out); max_trading_wnear 10000 NEAR caps the 1-click balance at deposit)

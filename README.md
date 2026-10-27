@@ -1,23 +1,25 @@
+<p align="center"><img src="docs/hero.png" alt="nearswaps agent kit: trade, withdraw to the owner, caps on chain" width="720"></p>
+
 # nearswaps agent kit
 
 Set a bot loose with 5 NEAR. It can trade, it can't run off with your wallet.
 
-The nearswaps agent kit lets an AI agent (Claude Code, Codex, a Python bot, a Telegram bot) trade NEAR tokens on
-nearswaps through the live 1-click contract, `nekoorders.near`, from a 1-click balance only the owner can withdraw.
-Two layers of limits apply. The **hard limits** are on chain: the agent key is a function-call key that can call
-only `trade`, `withdraw` and `recover_trade` on `nekoorders.near`; `withdraw` pays the owner only; `recover_trade`
-only ever credits the owner; trades go only through pools the contract allows; the contract caps each trade and
-each balance and can pause trading. The **policy** is the kit's own, in a file next to the agent: a token-check
-score floor (with a trusted list that skips it), a per-trade maximum, a daily budget, a deny list and a cool-down.
-Every agent trade pays the normal 1-click fee.
+AI agents on other chains trade by holding a seed phrase, which means a bad prompt or a bad tool call can empty the
+wallet. The nearswaps agent kit gives an agent (Claude Code, Codex, a Python bot, a Telegram bot) something smaller: a
+NEAR function-call key that can call only `trade`, `withdraw` and `recover_trade` on the live 1-click contract
+`nekoorders.near`, working from a 1-click balance that holds funds only you can withdraw. Two layers of limits apply.
+The **hard limits** are on chain, enforced by the contract whatever the agent does. The **policy** is the kit's own
+file next to the agent: a token-check score floor, a per-trade maximum, a daily budget, a deny list and a cool-down.
+The kit is a Node SDK (`@nearswaps/agent`), an MCP server (`@nearswaps/agent-mcp`) and a CLI. Every agent trade pays
+the normal 1-click fee.
 
-> Status: the SDK, the CLI and the MCP server are built (sessions 1 and 2). The nearswaps.com/agents page and the
-> full README follow. The packages are not on npm yet: until they are, run them from this repository as shown below.
+## Try it in two minutes, no key
 
-## Install (from this repository)
+Read-only: no key, nothing signed, nothing sent. Each step is "do X, see Y". The output is plain text, one fact per
+line, the same shape every time. The outputs below were pasted from a run on 27 Oct 2026 and trimmed where marked.
 
-Node 18 or later. No native dependencies (the SDK has no runtime dependencies at all; the MCP server adds the
-official `@modelcontextprotocol/sdk` and `zod`).
+Install (Node 18 or later; the SDK has no runtime dependencies, the MCP server adds the official
+`@modelcontextprotocol/sdk` and `zod`). The packages are not on npm yet, so run them from this repository:
 
 ```bash
 git clone https://github.com/<org>/nearswaps-agents
@@ -28,12 +30,7 @@ npm link --workspace @nearswaps/agent --workspace @nearswaps/agent-mcp
 ```
 
 `npm link` puts `nearswaps-agent` (the CLI) and `nearswaps-agent-mcp` (the MCP server) on your path. Without it, use
-`node packages/agent/dist/cli.js` and `node packages/mcp/dist/bin.js` in their place in every command below.
-
-## Try it in two minutes, no key
-
-Read-only: no key, nothing signed, nothing sent. Each step is "do X, see Y"; the output is plain text, one fact per
-line, the same shape every time (the values below are from a run on 23 Oct 2026).
+`node packages/agent/dist/cli.js` and `node packages/mcp/dist/bin.js` in their place.
 
 **1. Check a token.**
 
@@ -45,17 +42,21 @@ nearswaps-agent check wrap.near
 token: wrap.near
 score: 96
 verdict: nothing dangerous found
-checked at: 2026-10-23T08:38:38.064Z
+checked at: 2026-10-27T09:20:48.988Z
 finding: ok: Locked: no access keys
 finding: ok: Known template: Wrapped NEAR
-finding: info: Could not check: who holds the LP of Rhea pool 3514 (STNEAR/wNEAR, 997,662 NEAR)
+finding: ok: No risky methods
+finding: info: One wallet can pull most of the liquidity
+finding: ok: No wallet holds over 30%
 finding: low: No icon
+...
 lp browser pass: skipped (see the README)
 ```
 
 Shape: `token`, `score` (0 to 100), `verdict` (one of "nothing dangerous found", "caution", "high risk"), `checked at`,
-then one `finding: <severity>: <title>` line per finding (17 for `wrap.near`; shortened here), then
-`lp browser pass: skipped`. It takes 5 to 10 seconds the first time; the kit keeps the answer for 60 seconds.
+one `finding: <severity>: <title>` line per finding (17 for `wrap.near`; shortened here), then `lp browser pass:
+skipped`. It takes 5 to 10 seconds the first time; the kit keeps the answer for 60 seconds. The endpoint allows 30
+requests a minute per caller, so please don't poll it.
 
 **2. Quote a trade.**
 
@@ -66,121 +67,92 @@ nearswaps-agent quote near usdc 1
 ```text
 side: buy
 amount in: 1 NEAR
-amount out: 4.913706 USDC
-minimum: 4.691477 USDC (slippage 5%)
-fee: 0.024691 USDC (0.5%)
+amount out: 4.409774 USDC
+minimum: 4.210336 USDC (slippage 5%)
+fee: 0.022159 USDC (0.5%)
 venue: Rhea
 price impact: 0.00%
 leg 1: 1000000000000000000000000 raw in, pool 4512 wrap.near to 17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1
-quoted at: 2026-10-23T08:38:45.465Z
+quoted at: 2026-10-27T09:29:22.683Z
 ```
 
 Shape: `side`, `amount in`, `amount out` (after the 1-click fee), `minimum` (the `min_out` sent to the contract, at the
 slippage), `fee`, `venue` (Rhea or Intear DEX), `price impact` when known, one `leg N:` line per route leg, `quoted at`.
+The price moves with the market; the shape does not.
 
-**3. Ask an AI agent.** Add the MCP server, read-only, to Claude Code (or Codex, below):
+**3. Ask an AI agent.** Add the MCP server, read-only, to Claude Code (Codex: `codex mcp add nearswaps --
+nearswaps-agent-mcp --read-only`):
 
 ```bash
 claude mcp add nearswaps -- nearswaps-agent-mcp --read-only
 ```
 
-Run `/mcp` in Claude Code: `nearswaps` is connected with eight tools, all read-only (`get_quote`, `check_token`,
-`list_new_launches`, `list_top_traders`, `get_wallet`, `get_balance`, `get_pending`, `get_policy`) and no money tool.
+The server prints one line to stderr and registers eight tools, all read-only, and no money tool. A client lists:
+
+```text
+nearswaps-agent-mcp 0.1.0: read-only (no key loaded, no money tools)
+get_quote, check_token, list_new_launches, list_top_traders, get_wallet, get_balance, get_pending, get_policy
+```
+
 Then ask:
 
 ```text
 Which NEAR tokens launched in the last hour, and what do they score?
 ```
 
-The agent calls `list_new_launches` (`since_minutes: 60`), then `check_token` for the launches it picks, and answers
-with each token's id, launchpad, holders, score and verdict. Every tool answers in JSON; `check_token` gives
-`{ token, score, verdict, checked_at, findings: [{ severity, title, detail }], cached, note, lp_browser_pass }`.
-
-Add `--json` to any CLI command for the raw result, and `--color` for mint buys and red sells in a terminal that
-supports it (no colour codes by default).
-
-## Add the MCP server to Claude Code or Codex
-
-The server is `nearswaps-agent-mcp`, on stdio. `--read-only` loads no key and registers no money tool; without it the
-server loads the agent key, checks it on chain (exactly `trade`, `withdraw` and `recover_trade` on `nekoorders.near`,
-anything else refused) and adds `buy`, `sell`, `withdraw` and `recover_trade`. If the key is missing or wrong the
-server does not start, and says why on stderr.
-
-Claude Code:
+The agent calls `list_new_launches` (`since_minutes: 60`), then `check_token` for the launches it picks. Every tool
+answers in JSON. When this was run, the last-hour call returned `"launches": []` with all four sources (`nearly`,
+`hoot`, `intear`, `shards`) `"ok": true`: an empty hour is a valid answer, and a real one. The same list over 24
+hours, as the CLI prints it (three rows of a longer list):
 
 ```bash
-claude mcp add nearswaps -- nearswaps-agent-mcp --read-only
+nearswaps-agent launches --since 24h --limit 3
 ```
 
-```bash
-claude mcp add nearswaps-trade -- nearswaps-agent-mcp --account <account>
+```text
+launch: 2026-10-26T22:58:46Z nearly nearcity.nearlytrade.near NEARCITY holders 0
+launch: 2026-10-26T22:56:08Z nearly chicago.nearlytrade.near CHICAGO holders 0
+launch: 2026-10-26T22:52:12Z nearly neargemini.nearlytrade.near NEARGEMINI holders 3
 ```
 
-Codex:
-
-```bash
-codex mcp add nearswaps -- nearswaps-agent-mcp --read-only
-```
-
-or in `~/.codex/config.toml`:
-
-```toml
-[mcp_servers.nearswaps]
-command = "nearswaps-agent-mcp"
-args = ["--read-only"]
-```
-
-For trading, use `args = ["--account", "<account>"]`. Without `npm link`, the command is `node` and the first
-argument is the full path to `packages/mcp/dist/bin.js` (on Windows, for example
-`C:\Users\<you>\nearswaps-agents\packages\mcp\dist\bin.js`). Options: `--account <id>` (default: the only key in
-`~/.nearswaps-agent`, or `NEARSWAPS_AGENT_ACCOUNT`), `--policy <file>`, `--home <dir>`, `--read-only`.
-
-The read tools carry `readOnlyHint`, so a client can run them without asking; `buy`, `sell` and `withdraw` carry
-`destructiveHint`, so a client asks before each one unless you tell it otherwise. `recover_trade` moves money but only
-ever credits the owner, so it is marked neither read-only nor destructive.
-
-The token check behind `check_token` and the policy's score floor is `https://nearswaps.com/api/safety`. It takes 5 to
-10 seconds the first time a token is checked (the endpoint reads the chain and several indexers); the kit then keeps
-the answer for 60 seconds per token, so a second `check` or a buy straight after is quick. The endpoint allows 30
-requests a minute per caller; please don't poll it. One difference from the check page: the page also reads Rhea's
-LP holder list in your browser and sends those names along (the "browser LP pass"); the kit skips that pass, so an
-LP-holder finding can read "holder unknown" where the page would name the holder. The score the policy uses is the
-one the endpoint returns without that pass.
+Add `--json` to any CLI command for the raw result and `--color` for mint buys and red sells in a terminal that
+supports it. More options, every command and every tool: [docs/reference.md](docs/reference.md).
 
 ## Let it trade
 
-| Step | Command or place | Expected result |
-|---|---|---|
-| 1. Make the agent key | `nearswaps-agent key new <account>` | a public key `ed25519:...`; the key pair is in `~/.nearswaps-agent/<account>.json` (mode 600 on macOS and Linux; see below for Windows) |
-| 2. Add it to the account | nearswaps.com/agents (coming), or near-cli below | one AddKey: receiver `nekoorders.near`, methods `trade`, `withdraw` and `recover_trade`; `nearswaps-agent key show <account>` says `status: On` |
-| 3. Deposit | nearswaps.com/terminal, 1-click tab, Deposit | `nearswaps-agent balance` shows the deposit |
-| 4. Write the policy | `nearswaps-agent policy init`, then edit `~/.nearswaps-agent/policy.json` | `nearswaps-agent policy show` prints it |
-| 5. Trade | `nearswaps-agent buy <token> 0.2` | `outcome: filled`, a tx link and the fee; or `outcome: blocked` with the rule that stopped it |
-| 6. Withdraw | `nearswaps-agent withdraw near` | the NEAR is back in the owner's wallet; the agent cannot name a recipient |
-| If a trade stopped part way | `nearswaps-agent pending`, then `nearswaps-agent recover <id>` once it is recoverable | `outcome: filled` (settled into the 1-click balance), or `pending` with what to do next |
+Real mainnet runs by the owner (`tome.near`): a 0.1 NEAR buy (the first on 23 Oct 2026), a sell and a withdraw. The
+agent key was added with all three methods and the policy was the example below. The records are in
+[docs/runs](docs/runs).
 
-Until the /agents page is live, the owner adds the agent key with near-cli (near-cli-rs; the owner signs with their
-own full-access key, which never touches the kit):
+**Step 1. Make the agent key.** The agent makes its own key pair and prints only the public key; the pair stays in
+`~/.nearswaps-agent/<account>.json` (mode 600 on macOS and Linux).
+
+```bash
+nearswaps-agent key new <account>
+```
+
+**Step 2. Add it to the account.** The owner approves one `AddKey` in their own wallet: receiver `nekoorders.near`,
+methods `trade`, `withdraw` and `recover_trade`, no allowance cap. On nearswaps.com/agents that is one button; the page
+is built but not published yet, so until it is, use near-cli (the owner signs with their own full-access key, which
+never touches the kit):
 
 ```bash
 near account add-key <account> grant-function-call-access --allowance unlimited --contract-account-id nekoorders.near --function-names trade,withdraw,recover_trade use-manually-provided-public-key <public key from step 1> network-config mainnet sign-with-keychain send
 ```
 
-No allowance cap, as the Terminal's own 1-click key: NEAR reserves up to 10 times the gas price against a key's
-allowance and does not give it back to the allowance, so a capped key runs dry. The key still can only call
-`trade`, `withdraw` and `recover_trade` on `nekoorders.near`. Gas for each call comes out of the owner's own NEAR
-balance (keep about 1 NEAR free in the wallet itself: each trade reserves up to 0.9 NEAR there for a few seconds).
+Then `nearswaps-agent key show <account>` says `status: On`. The kit refuses to run with any key that is not exactly
+`trade`, `withdraw` and `recover_trade` on `nekoorders.near`: a full-access key in the key file is an error, not a
+feature. (On Windows, NTFS ignores mode 600, so keep the kit on a machine only you use.)
 
-The kit checks the key on start and refuses to run with any key that isn't exactly `trade`, `withdraw` and
-`recover_trade` on `nekoorders.near`: a full-access key in the key file is an error, not a feature. The Terminal's
-own 1-click key (two methods, kept in your browser) is a different key and is never taken for the agent key.
+**Step 3. Deposit.** The owner deposits NEAR into the 1-click balance in the Terminal (nearswaps.com/terminal, 1-click
+tab, Deposit). The agent cannot deposit: `deposit_trading` takes an attached deposit, which a function-call key cannot
+send. `nearswaps-agent balance` shows the balance, and every trade checks it first (the refusal below read 0.777503
+NEAR in the 1-click balance).
 
-On Windows, NTFS ignores mode 600, so administrators and any program running as you can read the key file: keep the kit
-on a machine only you use, and never put a full-access key in that file.
+### The policy
 
-## The policy
-
-`~/.nearswaps-agent/policy.json` (or `--policy <file>`). The example `policy init` writes:
+**Step 4. Write the policy.** `nearswaps-agent policy init` writes this example to `~/.nearswaps-agent/policy.json`;
+`nearswaps-agent policy show` prints it with today's spend.
 
 ```json
 {
@@ -203,19 +175,121 @@ on a machine only you use, and never put a full-access key in that file.
 |---|---|
 | `paused` | `true` stops every buy and sell; withdrawals still work |
 | `deny` | token ids the agent never buys |
-| `trusted` | token ids whose buys skip the score floor, and only that: the deny list and every other rule still apply. The default is native USDC, USDt and `wrap.near`: native USDC scores 20 ("high risk") today because its issuer keeps keys on the token contract |
+| `trusted` | token ids whose buys skip the score floor, and only that: the deny list and every other rule still apply |
 | `min_score` | the least token-check score (0 to 100) a token needs for a buy |
 | `max_trade_near` | the most NEAR one buy may spend |
-| `daily_budget_near` | the most NEAR traded per UTC day: buys count the NEAR spent, sells the NEAR expected back |
+| `daily_budget_near` | the most NEAR traded per UTC day |
 | `cooldown_sec` | seconds after a trade in a token before the next trade in that token |
-| `slippage_bps` | `min_out` is the quote less this (500 = 5%), or `"auto"` for the Terminal's auto slippage |
+| `slippage_bps` | `min_out` is the quote less this (500 = 5%), or `"auto"` |
 
-Every field is required; a missing or unknown field is an error, never a silent default. Checked before every buy
-and sell, in this order: paused; deny list; score floor (a fresh token check, skipped for trusted tokens); per-trade
-maximum; daily budget (from the local ledger `ledger-<account>.json` next to the policy, reset at 00:00 UTC);
-cool-down; the contract's own `max_trade_wnear` and pause, read live, so a block by the contract says so. A sell is
-checked for the budget and the cool-down only: selling a bad token is never blocked by its score. Withdrawals and
-`recover_trade` are not trades: the policy doesn't apply to them, and they work while the policy is paused.
+Every field is required; a missing or unknown field is an error, never a silent default. The order the rules run in is
+in [docs/reference.md](docs/reference.md). `nearswaps-agent policy check buy <token> <near>` is a dry run: each rule,
+pass or fail, nothing signed.
+
+**Step 5. The first buy: a refusal, before anything is signed.** The owner ran this with 0.194709 NEAR free in the
+wallet itself. Each trade reserves gas there for a few seconds, so the kit stopped, listed every check, and signed
+nothing:
+
+```bash
+nearswaps-agent buy blackdragon 0.1 --account tome.near
+```
+
+```text
+outcome: blocked
+reason: keep at least 0.21 NEAR free in the owner's wallet tome.near itself (not the 1-click balance) for this
+        trade's network fee reserve; almost all of it comes back within seconds. The wallet has 0.194709 NEAR free
+score: 80
+check venue: pass (trades on Rhea)
+check balance: pass (0.777503 NEAR in the 1-click balance)
+check paused: pass
+check deny_list: pass
+check score_floor: pass (score 80 (caution) meets the floor of 70)
+check max_trade_near: pass (0.1 NEAR is within the per-trade maximum of 1 NEAR)
+check daily_budget_near: pass (0 NEAR traded today (UTC); 0.1 NEAR with this trade, within 3 NEAR)
+check cooldown_sec: pass (no earlier trade in blackdragon.tkn.near)
+check contract_caps: pass (within the contract's max_trade_wnear of 10000 NEAR)
+check gas_reserve: fail
+```
+
+A `blocked` result is the kit working: the rule that stopped it is named, and nothing was sent. The owner then sent
+1 NEAR to the wallet and ran the same command again.
+
+**Step 6. The same buy, filled.** [Transaction on NearBlocks](https://nearblocks.io/txns/CjetygCtZzcM1LZq49ZznVKW4d3ftQnxDSqnQjMgcmP1).
+
+```text
+outcome: filled
+tx: CjetygCtZzcM1LZq49ZznVKW4d3ftQnxDSqnQjMgcmP1   (nearblocks.io/txns/CjetygCtZzcM1LZq49ZznVKW4d3ftQnxDSqnQjMgcmP1)
+contract event: trade id 44, venue rhea, wrap.near -> blackdragon.tkn.near
+amount in:  0.1 NEAR
+amount out: 44,056,878.29046 BLACKDRAGON
+fee: 25 bps (110,418.24 BLACKDRAGON to nekotesting.near; the owner's Feline-staker discount halves the 50 bps fee)
+gas burnt: 25.67 Tgas, 0.00241 NEAR, paid from the owner's wallet
+```
+
+Afterwards the 1-click balance held 0.52 NEAR and 44,056,878.29046 BLACKDRAGON. Selling is the same call the other way;
+this one sold half of that BLACKDRAGON balance, and a sell is never blocked by the score:
+[transaction on NearBlocks](https://nearblocks.io/txns/E1JVrAa7qAFftCVZRfoLdyQiq5qetsiSdZRkPAL4Dbo3).
+
+```text
+outcome: filled
+reason: sold blackdragon.tkn.near on Rhea
+amount in: 22,028,439.14523 BLACKDRAGON
+amount out: 0.032718 NEAR
+fee: 0.000082 NEAR
+tx: https://nearblocks.io/txns/E1JVrAa7qAFftCVZRfoLdyQiq5qetsiSdZRkPAL4Dbo3
+check venue: pass (trades on Rhea)
+check balance: pass (44,056,878.29046 BLACKDRAGON in the 1-click balance)
+check paused: pass (the policy is not paused)
+check deny_list: skip (not applied to sells)
+check score_floor: skip (not applied to sells)
+check max_trade_near: skip (not applied to sells)
+check daily_budget_near: pass (0 NEAR traded today (UTC); 0.0328 NEAR with this trade, within 3 NEAR)
+check cooldown_sec: pass (the last trade in blackdragon.tkn.near was more than 600 s ago)
+check contract_caps: pass (within the contract's max_trade_wnear of 10000 NEAR (a sell is valued at the expected NEAR out); max_trading_wnear 10000 NEAR caps the 1-click balance at deposit)
+```
+
+**Step 7. Withdraw.** The NEAR comes back to the owner's wallet. `withdraw` has no recipient argument, so the agent
+cannot name one. [Transaction on NearBlocks](https://nearblocks.io/txns/HVs7G59awi7DQZ6Yt7TSF5hcyVxjRANbcvEjFiwv6bSs).
+
+```bash
+nearswaps-agent withdraw near --account tome.near
+```
+
+```text
+outcome: filled
+reason: NEAR sent to tome.near as NEAR
+amount in: 0.552718 NEAR
+amount out: 0.552718 NEAR
+tx: https://nearblocks.io/txns/HVs7G59awi7DQZ6Yt7TSF5hcyVxjRANbcvEjFiwv6bSs
+check withdraw_to_owner: pass (the contract pays tome.near only: withdraw has no recipient argument)
+```
+
+If a trade stops part way, `nearswaps-agent pending` lists it and `nearswaps-agent recover <id>` carries it on once it
+is recoverable (about an hour after its last step); the result is `filled` or `pending` with what to do next. Every
+money call returns one shape and never throws: `outcome` (`filled`, `refused`, `blocked`, `unclear` or `pending`),
+`reason`, `tx`, amounts, `fee`, `score` and every check. Each key-signed call is signed once and sent once, then followed
+by its hash, so a trade can't happen twice. Details: [docs/reference.md](docs/reference.md).
+
+## What the key can and cannot do
+
+Can, with its key and no human present:
+- Read anything public: quotes, token check scores and findings, new launches, top traders, any wallet's record,
+  the chart data, open orders, its own 1-click balance and pending trades.
+- `trade` from the owner's 1-click balance: buy a token with NEAR, sell a token for NEAR, on Rhea pools the
+  contract allows or Intear DEX, with its own `min_out` from a slippage setting.
+- `withdraw` the balance back to the owner's wallet (never anywhere else; the contract has no recipient argument).
+- `recover_trade` on a trade that stopped part way (anyone may call it; it is the key's third method, decided 22 Oct after
+  session 1 found the two-method key could not call it).
+
+Cannot, by construction (a function-call key cannot attach a deposit, and the key names three methods only):
+- Deposit into the 1-click balance (`deposit_trading` is payable). The human deposits in the Terminal.
+- Place auto orders (`ft_transfer_call` needs 1 yoctoNEAR). Stops and limits stay a human step in the Terminal.
+- Make a NEAR Intents deposit for a cross-chain exit (an `ft_transfer`). The SDK can fetch the quote and hand the
+  human a ready link; the human signs.
+- Touch any other contract, token or account, or the owner's other keys.
+
+Costs the owner must know: gas for each trade comes out of the owner's NEAR balance (the key has no fee cap, by
+design since v1.6); the 1-click fee per trade as in the Terminal. Agent trades earn no nearswaps points today.
 
 ## Hard limits versus policy
 
@@ -228,151 +302,54 @@ checked for the budget and the cool-down only: selling a bad token is never bloc
 | A pause switch for trading (withdrawals always work) | Cool-down per token |
 | A function-call key can't attach NEAR: no deposits, no auto orders, no transfers | A paused flag |
 
-`nekoorders.near` still holds its own keys (the lock step has not been run) and the fee wallet's key rotation is
-open: the contract can still be upgraded by its owner.
+`nekoorders.near` still holds its keys (the lock step has not been run) and the fee wallet's key rotation is open: the
+contract can still be upgraded by its owner. The policy file is the kit's own and is enforced where the agent runs: an
+agent with shell access can edit it, which is why the hard limits are the ones to rely on.
 
-## What the kit returns
+## Architecture
 
-Every money call (`buy`, `sell`, `withdraw`, `recover_trade`) returns the same shape and never throws:
+<p align="center"><img src="docs/architecture.svg" alt="The agent talks over MCP or an import to @nearswaps/agent, which reads the nearswaps.com API and NEAR RPC views, checks the policy file and a local ledger, and signs trade, withdraw and recover_trade once for nekoorders.near" width="800"></p>
 
-```json
-{ "outcome": "filled", "reason": "...", "tx": "<hash>", "amount_in": "0.1 NEAR", "amount_out": "... BLACKDRAGON",
-  "fee": "... BLACKDRAGON", "score": 80, "policy_checks": [{ "rule": "score_floor", "status": "pass", "detail": "..." }] }
-```
-
-| Outcome | Meaning |
-|---|---|
-| `filled` | the venue filled the trade (contract event `trade`), or a withdrawal was paid out |
-| `refused` | nothing changed hands: the venue didn't fill at the minimum (`trade_failed`, the input is back), or the contract or the network refused the call before anything moved |
-| `blocked` | the policy, or a check the kit makes before signing (balance, venue, gas reserve), stopped it; nothing was signed; `policy_checks` names the rule |
-| `unclear` | the venue's answer couldn't be read (`trade_unclear`): kept aside, settled by hand; nothing is lost |
-| `pending` | sent and still settling: follow it with `nearswaps-agent pending`; never send it again |
-
-Each key-signed call is signed once and sent once. If the connection drops or a node times out, the same signed
-transaction may go to the other node, then it is followed by its hash until it is final; it is never signed or sent
-again, so a trade can't happen twice. The only fresh signatures are after a refused nonce and after the contract's
-own "try again in a moment", both before anything ran, and only once (the Terminal's own rule).
-
-Money calls on one agent run one at a time, in the order they were asked for, so an MCP client that calls two at
-once can't pass the daily budget or the cool-down twice, or sign two transactions with the same nonce.
-
-The kit trades on Rhea and on Intear DEX. Rhea DCL launches (Nearly, JustHoot) and Shards curves are read and
-listed, but trading them stays in the Terminal for now.
-
-## The CLI
-
-`nearswaps-agent <command>`; plain text, one fact per line, no colour unless `--color`, no emoji. Exit code 0 when
-done, 1 on an error, 2 when a money command (or `policy check` for a trade) is blocked or refused.
-
-| Command | Key | What it prints |
-|---|---|---|
-| `check <token>` | no | the token check: score, verdict, findings |
-| `quote <from> <to> <amount>` | no | amount out, minimum, fee, venue, route legs |
-| `launches [--since 1h] [--limit n]` | no | one line per new launch: time, launchpad, id, symbol, holders |
-| `traders [--window 7d\|30d] [--limit n]` | no | one line per Top Trader: rank, wallet, realised profit, return, win rate, trades |
-| `wallet <account>` | no | any wallet's rank, realised profit, holdings and positions |
-| `balance [--account id]` | no | the 1-click balance and the wallet's NEAR free for gas |
-| `pending [--account id]` | no | trades, deposits and withdrawals still settling, with the recover time |
-| `key new <account>` | makes it | the public key to add on nearswaps.com/agents and the key file |
-| `key show [account]` | reads it | the public key and whether it is On, as the kit needs it |
-| `policy init` | no | writes the example policy |
-| `policy show` | no | the policy, today's spend (UTC) and what is left |
-| `policy check` | no | whether the file is valid: every field present and in range |
-| `policy check buy <token> <near>`, `policy check sell <token> <amount>` | no | a dry run of the policy for that trade: each rule, pass or fail; nothing signed |
-| `buy <token> <near>` | signs | the money result: outcome, reason, amounts, fee, score, tx link, every check |
-| `sell <token> <amount\|50%\|all>` | signs | the same |
-| `withdraw [token] [amount]` | signs | the same; always to the owner's own wallet |
-| `recover <id>` | signs | the same, for a trade that stopped part way (`pending` lists the ids) |
-
-Options: `--account <id>`, `--policy <file>`, `--slippage <bps|auto>`, `--home <dir>`, `--limit <n>`, `--json`, `--color`.
-
-## The MCP tools
-
-| Tool | Kind | Description (as the server gives it) |
-|---|---|---|
-| `get_quote` | read-only | quotes a 1-click trade of NEAR for a token or a token for NEAR, with the amount out after the fee, the `min_out` and the route |
-| `check_token` | read-only | the token check: score, verdict, findings; the score the score floor uses (cached 60 s) |
-| `list_new_launches` | read-only | new launches across Shards, Nearly, JustHoot and Intear, newest first |
-| `list_top_traders` | read-only | Top Traders of 7 or 30 days by realised profit in USD |
-| `get_wallet` | read-only | any wallet's trading record |
-| `get_balance` | read-only | an account's 1-click balance and NEAR free for gas |
-| `get_pending` | read-only | an account's trades still settling, with the recover time |
-| `get_policy` | read-only | the policy, today's spend (UTC) and what is left |
-| `buy` | moves money, destructive | buys with NEAR from the 1-click balance; blocked by the policy (paused, deny list, score floor unless trusted, per-trade maximum, daily budget, cool-down); pays the 1-click fee |
-| `sell` | moves money, destructive | sells for NEAR into the 1-click balance; blocked only when paused, above the daily budget or inside the cool-down, never by score; pays the 1-click fee |
-| `withdraw` | moves money, destructive | to the owner's own wallet only (no recipient argument); works while the policy is paused |
-| `recover_trade` | moves money to the owner | carries on a trade that stopped part way; only ever credits the owner; outside the policy |
-
-The money tools return the result shape above as both text and structured content, and never throw. `--read-only`
-registers the first eight only.
-
-## The first mainnet trade (0.1 NEAR, by the owner)
-
-Not run by the build; Tome runs it from the demo wallet once steps 1 to 4 are done: the agent key added with all
-three methods (`trade`, `withdraw`, `recover_trade`; `nearswaps-agent key show <demo account>` must say
-`status: On`, and a key added earlier with two methods is refused), the policy as in the example (`max_trade_near`
-1, `daily_budget_near` 3, the default trusted list), at least 0.1 NEAR in the 1-click balance and about 1 NEAR free
-in the wallet itself:
-
-```bash
-nearswaps-agent buy blackdragon 0.1 --account <demo account>
-```
-
-Expected: `outcome: filled`, `amount in: 0.1 NEAR`, the BLACKDRAGON received, the fee and a NearBlocks link; the
-score (80 on 22 Oct 2026) and every policy check listed. If the score has dropped under 70 by then the result is
-`outcome: blocked` with `check score_floor: fail`, and nothing is sent. BLACKDRAGON is not on the trusted list, so
-this first trade also shows the score floor at work. If the result is `pending`, check `nearswaps-agent pending
---account <demo account>`; a trade that stopped part way can be carried on with `nearswaps-agent recover <id>
---account <demo account>` an hour after its last step. Then, to close the loop:
-
-```bash
-nearswaps-agent sell blackdragon all --account <demo account>
-```
-
-```bash
-nearswaps-agent withdraw near --account <demo account>
-```
-
-## Tests
-
-```bash
-npm test
-```
-
-Offline, from recorded fixtures, for both packages from the repository root: every policy rule (each blocks, each
-passes) and the trusted list, the policy dry run, the key check (any key but exactly `trade`, `withdraw` and
-`recover_trade` refused), `recover_trade` for each outcome, the route port against ten routes recorded read-only from
-the live Terminal on 22 Oct 2026 (same legs, same output to the last unit, same `min_out` at 5% and at auto slippage;
-the pool state in each fixture is checked against the chain with `node packages/agent/test/check-fixtures.mjs`), the
-signing bytes against near-api-js 5.1.1 (three vectors: a one-leg trade, a long args payload, a nonce above 2^32;
-`packages/agent/test/make-sign-vectors.cjs` makes them), sign once and send once, the result shape for every outcome,
-the ledger across the UTC day boundary, and the CLI's lines (plain by default, mint and red with `--color`). The MCP
-server is tested through the MCP SDK's own client: the tool list in both modes (the real `--read-only` server over
-stdio), the hints on every tool, a blocked buy that returns the rule with nothing signed, and read tools with no key.
-
-```bash
-npm run smoke
-```
-
-Live and read-only (CI runs it on every push): `check wrap.near` returns a score from 0 to 100 and a verdict from
-the fixed list; the launch list has at least one row; `quote near usdc 1` returns a route and a `min_out` within 2%
-of Rhea's own `get_return` for the same legs, read straight after (a few blocks pass between the two reads).
+- **Reads** use the public endpoints on nearswaps.com as they are; no new backend.
+- **Routing** is a port of the site's route code over the contract's allowed pools; the test suite compares its route
+  and `min_out` with ten routes recorded read-only from the live Terminal.
+- **Gas** comes from the contract's `trade_gas_tgas`, never a constant.
+- **Signing** follows the Terminal's own pattern: sign once, send once, follow by hash. Money calls on one agent run
+  one at a time, so two at once can't pass the daily budget twice or share a nonce.
+- **The MCP server** puts `readOnlyHint` on the read tools and `destructiveHint` on `buy`, `sell` and `withdraw`;
+  `--read-only` loads no key and registers no money tool.
+- **Tests**: `npm test` runs 91 offline tests from recorded fixtures; `npm run smoke` is live and read-only (CI runs it).
 
 ## Built for NEAR HACKATHON 2026
 
-Tracks: AI Security & Defense, Agent Economy, Unstoppable DeFi.
+Tracks: **AI Security & Defense**, **Agent Economy**, **Unstoppable DeFi**.
 
 Predates the hackathon: the `nekoorders.near` contract and its 1-click trading, the nearswaps.com site and its read
-endpoints, the token check, the keeper and the backend. Built during it: this SDK, the MCP server, the
-nearswaps.com/agents page, the docs and the video.
+endpoints, the token check, the keeper and the backend. Built from 22 Oct 2026 onward: this SDK (first commit 22 Oct),
+the MCP server and CLI (23 Oct), the nearswaps.com/agents page (built 23 Oct, not yet published when this was
+written) and these docs (27 Oct). The hackathon's submission window is 1 to 14 Nov 2026, so the first of this work
+was written before the window opened; none of the contract, the site or the backend was built for it. The mainnet runs
+above are real trades from the owner's own wallet.
+
+`nekoorders.near` still holds its keys, and the fee wallet's key rotation is open: the contract can still be upgraded
+by its owner. The code hash on chain on 27 Oct 2026 (block 221808043) was `7PyDr1xeswTWarWdvDhJm97NDJUdCJYyYpDbcAzLFfW7`;
+read it yourself:
+
+```bash
+curl -s -X POST https://free.rpc.fastnear.com -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_account","finality":"final","account_id":"nekoorders.near"}}'
+```
+
+or open [nekoorders.near on NearBlocks](https://nearblocks.io/address/nekoorders.near).
 
 ## Licence
 
-MIT, for the kit in this repository (see `LICENSE`). The contract's source is not in this repository; its code is
-on chain at `nekoorders.near`.
+MIT for the kit in this repository (see [LICENSE](LICENSE)). The contract's source is not in this repository: its code is
+on chain at `nekoorders.near`, identified by the hash above.
 
 ## Links
 
 - nearswaps.com
+- nearswaps.com/agents (where the owner adds and removes the agent key)
 - The Terminal: nearswaps.com/terminal
 - The token check: nearswaps.com/check
+- [docs/reference.md](docs/reference.md), [SECURITY.md](SECURITY.md), [CONTRIBUTING.md](CONTRIBUTING.md)

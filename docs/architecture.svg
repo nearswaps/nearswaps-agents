@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="800" height="560" role="img" aria-labelledby="t d">
+  <title id="t">nearswaps agent kit architecture</title>
+  <desc id="d">An agent talks over MCP or an import to the @nearswaps/agent package. The package reads the nearswaps.com API, reads NEAR RPC views, checks the policy file and its local ledger, and signs trade, withdraw and recover_trade once for nekoorders.near.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#9A9FA8"/>
+    </marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#01FAC0"/>
+    </marker>
+    <style>
+      .w { font-family: Manrope, "Segoe UI", Helvetica, Arial, sans-serif; }
+      .m { font-family: "JetBrains Mono", ui-monospace, Consolas, Menlo, monospace; }
+    </style>
+  </defs>
+
+  <rect width="800" height="560" fill="#060708"/>
+
+  <!-- eyebrow -->
+  <text x="32" y="34" class="m" font-size="12" letter-spacing="1.2" fill="#01FAC0">ARCHITECTURE</text>
+
+  <!-- agent -->
+  <rect x="32" y="56" width="236" height="88" rx="16" fill="#0A0B0D" stroke="#2A2B2E"/>
+  <text x="52" y="86" class="w" font-size="18" font-weight="800" fill="#F2F2F0">agent</text>
+  <text x="52" y="108" class="w" font-size="13" fill="#9A9FA8">Claude Code, Codex, any MCP</text>
+  <text x="52" y="126" class="w" font-size="13" fill="#9A9FA8">client, a Node script</text>
+
+  <!-- agent to kit -->
+  <line x1="62" y1="144" x2="62" y2="204" stroke="#9A9FA8" stroke-width="1.5" marker-end="url(#ar)"/>
+  <text x="76" y="178" class="m" font-size="12" fill="#9A9FA8">MCP (stdio) or import</text>
+
+  <!-- kit -->
+  <rect x="32" y="208" width="236" height="124" rx="16" fill="#0A0B0D" stroke="#01FAC0" stroke-opacity="0.55"/>
+  <text x="52" y="238" class="m" font-size="14" font-weight="700" fill="#F2F2F0">@nearswaps/agent</text>
+  <text x="52" y="262" class="w" font-size="13" fill="#9A9FA8">Node 18+, TypeScript,</text>
+  <text x="52" y="280" class="w" font-size="13" fill="#9A9FA8">zero native dependencies</text>
+  <text x="52" y="308" class="m" font-size="12" fill="#9A9FA8">+ @nearswaps/agent-mcp</text>
+
+  <!-- fan-out from the kit -->
+  <path d="M268 270 H304 M304 112 V472" fill="none" stroke="#9A9FA8" stroke-width="1.5"/>
+  <path d="M304 472 H340" fill="none" stroke="#01FAC0" stroke-width="1.5" marker-end="url(#am)"/>
+  <path d="M304 112 H338 M304 232 H338 M304 352 H338" fill="none" stroke="#9A9FA8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- reads -->
+  <rect x="340" y="56" width="428" height="112" rx="16" fill="#0A0B0D" stroke="#2A2B2E"/>
+  <text x="360" y="80" class="m" font-size="12" letter-spacing="1.2" fill="#01FAC0">READS</text>
+  <text x="360" y="102" class="w" font-size="16" font-weight="800" fill="#F2F2F0">nearswaps.com/api/*, no key</text>
+  <text x="360" y="124" class="m" font-size="12" fill="#9A9FA8">safety, market, traders, wallet, orders,</text>
+  <text x="360" y="141" class="m" font-size="12" fill="#9A9FA8">intear-tokens, trending; Nearly and</text>
+  <text x="360" y="158" class="m" font-size="12" fill="#9A9FA8">JustHoot launches from their own APIs</text>
+
+  <!-- views -->
+  <rect x="340" y="176" width="428" height="112" rx="16" fill="#0A0B0D" stroke="#2A2B2E"/>
+  <text x="360" y="200" class="m" font-size="12" letter-spacing="1.2" fill="#01FAC0">VIEWS</text>
+  <text x="360" y="222" class="w" font-size="16" font-weight="800" fill="#F2F2F0">NEAR RPC, FastNEAR then drpc</text>
+  <text x="360" y="244" class="m" font-size="12" fill="#9A9FA8">get_trading, get_pending, get_trading_config,</text>
+  <text x="360" y="261" class="m" font-size="12" fill="#9A9FA8">trade_gas_tgas, view_access_key_list,</text>
+  <text x="360" y="278" class="m" font-size="12" fill="#9A9FA8">Rhea get_pool_by_ids</text>
+
+  <!-- policy -->
+  <rect x="340" y="296" width="428" height="112" rx="16" fill="#0A0B0D" stroke="#2A2B2E"/>
+  <text x="360" y="320" class="m" font-size="12" letter-spacing="1.2" fill="#01FAC0">POLICY</text>
+  <text x="360" y="342" class="w" font-size="16" font-weight="800" fill="#F2F2F0">checked before every buy and sell</text>
+  <text x="360" y="364" class="m" font-size="12" fill="#9A9FA8">policy.json: paused, deny list, score floor,</text>
+  <text x="360" y="381" class="m" font-size="12" fill="#9A9FA8">per-trade max, daily budget, cool-down;</text>
+  <text x="360" y="398" class="m" font-size="12" fill="#9A9FA8">local ledger of today's spend</text>
+
+  <!-- trade -->
+  <rect x="340" y="416" width="428" height="112" rx="16" fill="#0A0B0D" stroke="#01FAC0" stroke-opacity="0.55"/>
+  <text x="360" y="440" class="m" font-size="12" letter-spacing="1.2" fill="#01FAC0">TRADE</text>
+  <text x="360" y="462" class="m" font-size="16" font-weight="700" fill="#F2F2F0">nekoorders.near</text>
+  <text x="360" y="484" class="m" font-size="12" fill="#9A9FA8">trade, withdraw, recover_trade: signed ONCE</text>
+  <text x="360" y="501" class="m" font-size="12" fill="#9A9FA8">with the agent key, sent ONCE, then followed</text>
+  <text x="360" y="518" class="m" font-size="12" fill="#9A9FA8">by hash (never a retrying send)</text>
+
+  <!-- legend -->
+  <text x="32" y="520" class="m" font-size="12" fill="#7D828B">mint = the path that moves money</text>
+  <text x="32" y="538" class="m" font-size="12" fill="#7D828B">withdraw pays the owner only</text>
+</svg>
