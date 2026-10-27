@@ -122,7 +122,8 @@ on 27 Oct 2026, Claude Code with the money-mode MCP server loaded declined to ca
 the read tools. That is Claude's own policy, not a kit limit. The money tools (`buy`, `sell`, `withdraw`,
 `recover_trade`) exist for agents that do place trades, such as a Node script on the SDK or another agent runtime, and
 the same hard limits and policy apply to all of them. Claude-based agents can leave the buy, sell and withdraw calls to
-the owner's CLI. Codex placing trades has not been tested.
+the owner's CLI, the [prompt-driven agent](#a-prompt-driven-agent) or the [scripted agent](#a-scripted-agent). Codex
+placing trades has not been tested.
 
 Add `--json` to any CLI command for the raw result and `--color` for mint buys and red sells in a terminal that
 supports it. More options, every command and every tool: [docs/reference.md](docs/reference.md).
@@ -133,7 +134,8 @@ Real mainnet runs by the owner (`tome.near`): a 0.1 NEAR buy (the first on 23 Oc
 agent key was added with all three methods and the policy was the example below. The records are in
 [docs/runs](docs/runs).
 
-Who places the trades: the owner at the CLI (as in the runs below), or a scripted agent on the SDK. Claude Code, run
+Who places the trades: the owner at the CLI (as in the runs below), the [prompt-driven agent](#a-prompt-driven-agent)
+(an open model told what to do in plain language), or a scripted agent on the SDK. Claude Code, run
 with the money-mode MCP server loaded, declined to call `buy` or `sell` in a test on 27 Oct 2026 and kept to research
 with the read tools; that is Claude's own policy, not a kit limit. The same hard limits and policy apply to every
 caller.
@@ -293,6 +295,96 @@ is recoverable (about an hour after its last step); the result is `filled` or `p
 money call returns one shape and never throws: `outcome` (`filled`, `refused`, `blocked`, `unclear` or `pending`),
 `reason`, `tx`, amounts, `fee`, `score` and every check. Each key-signed call is signed once and sent once, then followed
 by its hash, so a trade can't happen twice. Details: [docs/reference.md](docs/reference.md).
+
+## A prompt-driven agent
+
+[examples/prompt-agent.mjs](examples/prompt-agent.mjs) trades from a plain-language prompt. It runs a tool-calling
+loop against an OpenAI-compatible chat completions endpoint, by default NEAR AI Cloud (`https://cloud-api.near.ai/v1`,
+open models running in TEEs), with the kit's twelve tools taken from the MCP server itself, so the tools the model sees
+and the tools `nearswaps-agent-mcp` serves are the same code. Claude-based agents use the research tools and leave
+trading to this runner, the [scripted agent](#a-scripted-agent) or the owner's CLI.
+
+**Setup.** Make a NEAR AI Cloud key: sign in at [cloud.near.ai](https://cloud.near.ai), add credits under Credits, and
+generate a key under API Keys. Put it in `~/.nearswaps-agent/llm.json`, next to the agent key and outside the repo:
+
+```json
+{ "base_url": "https://cloud-api.near.ai/v1", "api_key": "<your NEAR AI Cloud key>", "model": "z-ai/glm-5.3-flash" }
+```
+
+or set `NEARSWAPS_LLM_API_KEY` (and, for another OpenAI-compatible endpoint, `NEARSWAPS_LLM_BASE_URL`); the
+environment wins over the file, and `--model` over both. Without a model in either, it uses `z-ai/glm-5.3-flash`, an
+open model NEAR AI Cloud serves itself with tool calling (`curl https://cloud-api.near.ai/v1/models` lists the rest,
+with `tools` among each model's `supported_features`). The key is read, never printed. Then:
+
+```bash
+node examples/prompt-agent.mjs --account <account> "buy 0.2 NEAR of the best token that launched today scoring over 70, then show my balance" --dry-run
+```
+
+Drop `--dry-run` for a real run with the agent key (steps 1 to 3 of [Let it trade](#let-it-trade) first). Flags:
+`--max-steps <n>` (default 12), `--max-money <n>` (default 2), `--model <id>`, `--policy <file>`, `--color`.
+
+What holds in code, whatever the model says:
+
+- at most `--max-steps` model turns, then the run stops with no answer;
+- at most `--max-money` money calls (`buy`, `sell`, `withdraw`, `recover_trade`) a run; the next one is not sent;
+- a buy or sell the policy blocked is not sent again in the same run, and the model is told so;
+- every money call goes through the policy and the contract, through the same handlers as the MCP server;
+- without `--dry-run`, the loop does not start unless the agent key file is there.
+
+The system prompt adds the kit's vocabulary and four rules: check the token and quote before a buy, never retry a
+blocked trade, stop when the request is met, report every outcome with its tx hash. `--dry-run` loads no key and
+signs nothing: `buy` and `sell` run the policy's dry run (`would pass` or `blocked`), `withdraw` and `recover_trade`
+return a note. Each step prints one fact per line: the model's tool call with its arguments, the tool's result (money
+results in full, read results trimmed to a line) and the model's final answer.
+
+The transcript below is the test's dry run (`examples/prompt-agent.test.mjs`): a scripted OpenAI-compatible server
+in place of the model and the kit's fake chain, with USDC standing in as a launch of the day. It shows the shape of a
+run, not a live one; the temporary paths and the server's port are shortened.
+
+```text
+mode: dry run (no key loaded; nothing signed)
+account: agent-demo.near
+policy: <test home>/.nearswaps-agent/policy.json
+model: test/model at http://127.0.0.1:<port>/v1
+most steps: 12
+most money calls: 2
+prompt: buy 0.2 NEAR of the best token that launched today scoring over 70, then show my balance
+step 1: call list_new_launches {"since_minutes":1440}
+step 1: result: { "launches": [ { "id": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1", "pad": "intear", "symbol": "172086", "name": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1", "created": 1793610000000, "mc_usd": ... (489 more characters)
+step 2: model: Two launches today. Checking both.
+step 2: call check_token {"token":"17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1"}
+step 2: result: { "token": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1", "score": 88, "verdict": "nothing dangerous found", "checked_at": "2026-11-02T12:00:00Z", "findings": [], "unchecked": 0, "liquidity_near": 5000, "cached": false, ... (43 more characters)
+step 2: call check_token {"token":"ftv2.nekotoken.near"}
+step 2: result: { "token": "ftv2.nekotoken.near", "score": 30, "verdict": "high risk", "checked_at": "2026-11-02T12:00:00Z", "findings": [], "unchecked": 0, "liquidity_near": 5000, "cached": false, "note": "", "lp_browser_pass": "skipped" }
+step 3: call get_quote {"from":"near","to":"17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1","amount":"0.2"}
+step 3: result: { "from": "wrap.near", "to": "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1", "amount_in": "0.2 NEAR", "amount_out": "0.984144 USDC", "min_out": "0.939634 USDC", "fee": "0.004945 USDC", "fee_bps": 50, "slippage_bps": 500, ... (1010 more characters)
+step 4: call buy {"token":"17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1","near":"0.2"}
+step 4: side: buy
+step 4: token: 17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1
+step 4: near: 0.2 NEAR
+step 4: outcome: would pass
+step 4: reason: every policy rule passes; the 1-click balance and the gas reserve are checked when the trade runs
+step 4: score: 88
+step 4: signed: nothing (a dry run)
+step 4: check paused: pass (the policy is not paused)
+step 4: check deny_list: pass (not on the deny list)
+step 4: check score_floor: pass (score 88 (nothing dangerous found) meets the floor of 70)
+step 4: check max_unchecked: pass (0 "could not check" findings, within the most of 3)
+step 4: check min_liquidity_near: pass (5000 NEAR of liquidity, at or above the least of 100 NEAR)
+step 4: check max_trade_near: pass (0.2 NEAR is within the per-trade maximum of 1 NEAR)
+step 4: check daily_budget_near: pass (0 NEAR traded today (UTC); 0.2 NEAR with this trade, within 3 NEAR)
+step 4: check cooldown_sec: pass (no earlier trade in 17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1)
+step 4: check contract_caps: pass (within the contract's max_trade_wnear of 10000 NEAR; max_trading_wnear 10000 NEAR caps the 1-click balance at deposit)
+step 5: call get_balance {}
+step 5: result: { "account": "agent-demo.near", "balances": [ { "token": "wrap.near", "amount": "2 NEAR", "raw": "2000000000000000000000000", "here": "2000000000000000000000000", "rhea": "0", "intear": "0" } ], "wallet_free": "5 NEAR" }
+answer: The best launch today scoring over 70 is 17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1 (USDC, score 88).
+answer: buy: would pass (a dry run; nothing signed, no tx)
+answer: 1-click balance: 2 NEAR
+money calls this run: 1 of at most 2
+```
+
+The tests also cover a filled buy (the tx hash in the result, the line and the answer), a blocked buy the model then
+tries again (not sent), the step cap and the money-call cap. No run against a live model is recorded here yet.
 
 ## A scripted agent
 

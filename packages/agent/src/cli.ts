@@ -62,7 +62,7 @@ function accountFrom(flags: Record<string, string | true>, home?: string): strin
   if (typeof flags.account === "string") return flags.account;
   if (process.env.NEARSWAPS_AGENT_ACCOUNT) return process.env.NEARSWAPS_AGENT_ACCOUNT;
   const dir = keyDir(home);
-  const files = existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith(".json") && f !== "policy.json" && !f.startsWith("ledger-")) : [];
+  const files = existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith(".json") && f !== "policy.json" && f !== "llm.json" && !f.startsWith("ledger-")) : [];
   if (files.length === 1) return files[0].slice(0, -5);
   throw new Error(files.length ? "more than one agent key in the store: pass --account <id>" : "no account: pass --account <id>, or run \"nearswaps-agent key new <account>\" first");
 }

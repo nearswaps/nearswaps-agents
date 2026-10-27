@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "npm run build --workspaces",
-    "test": "npm test --workspaces && node --test examples/trench-bot.test.mjs",
+    "test": "npm test --workspaces && node --test examples/trench-bot.test.mjs examples/prompt-agent.test.mjs",
     "smoke": "npm run smoke --workspace @nearswaps/agent"
   }
 }
