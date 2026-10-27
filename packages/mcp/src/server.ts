@@ -25,7 +25,7 @@ export interface ServerOptions {
 const INSTRUCTIONS = `nearswaps agent kit: trade NEAR tokens on nearswaps from a 1-click balance only the owner can withdraw.
 Read tools (get_quote, check_token, list_new_launches, list_top_traders, get_wallet, get_balance, get_pending, get_policy) sign nothing.
 Money tools (buy, sell, withdraw, recover_trade), when present, sign with the agent key: a function-call key that can call only trade, withdraw and recover_trade on nekoorders.near.
-Two layers of limits apply. Hard limits are the contract's: withdraw pays the owner only, trades go only through pools the contract allows, the contract caps each trade. The policy is the kit's: score floor, per-trade maximum, daily budget, deny list, trusted list, cool-down.
+Two layers of limits apply. Hard limits are the contract's: withdraw pays the owner only, trades go only through pools the contract allows, the contract caps each trade. The policy is the kit's: score floor, most unchecked findings, least liquidity, per-trade maximum, daily budget, deny list, trusted list, cool-down.
 Every money tool returns { outcome: filled | refused | blocked | unclear | pending, reason, tx, amount_in, amount_out, fee, score, policy_checks }. A blocked result names the rule that stopped it and nothing was signed. A pending result is still settling: follow it with get_pending and never send it again.
 The token check is rate limited (30 a minute per caller) and cached 60 seconds per token: do not poll it.`;
 
@@ -127,7 +127,7 @@ export function createServer(opts: ServerOptions): McpServer {
 
   server.registerTool("get_policy", {
     title: "Policy",
-    description: "Read-only: returns the policy the money tools run under (paused, deny list, trusted list, score floor, per-trade maximum, daily budget, cool-down, slippage) with today's spend (UTC) and what is left of the daily budget.",
+    description: "Read-only: returns the policy the money tools run under (paused, deny list, trusted list, score floor, most \"could not check\" findings, least liquidity in NEAR, per-trade maximum, daily budget, cool-down, slippage) with today's spend (UTC) and what is left of the daily budget.",
     inputSchema: {},
     annotations: { title: "Policy", ...READ, idempotentHint: false, openWorldHint: false },
   }, () => read(() => policyStatus(policyFile, defaultAccount)));
@@ -136,7 +136,7 @@ export function createServer(opts: ServerOptions): McpServer {
 
   server.registerTool("buy", {
     title: "Buy with NEAR",
-    description: "Moves money: buys a token with NEAR from the 1-click balance, blocked by policy when paused, on the deny list, below the score floor (unless trusted), above the per-trade maximum or the daily budget, or inside the token's cool-down, and pays the 1-click fee.",
+    description: "Moves money: buys a token with NEAR from the 1-click balance, blocked by policy when paused, on the deny list, below the score floor, with more \"could not check\" findings than the policy allows or less liquidity than it needs (those three skipped for trusted tokens), above the per-trade maximum or the daily budget, or inside the token's cool-down, and pays the 1-click fee.",
     inputSchema: { token: token("the token to buy"), near: z.string().min(1).max(40).describe("the NEAR to spend from the 1-click balance, as a decimal: \"0.2\""), slippage_bps: slippage },
     outputSchema: moneyShape,
     annotations: { title: "Buy with NEAR", readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },

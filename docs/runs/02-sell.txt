@@ -1,3 +1,6 @@
+(Recorded 23 Oct 2026, before the policy had max_unchecked and min_liquidity_near. A sell today also lists
+ check max_unchecked: skip and check min_liquidity_near: skip, after check score_floor.)
+
 outcome: filled
 reason: sold blackdragon.tkn.near on Rhea
 amount in: 22,028,439.14523 BLACKDRAGON

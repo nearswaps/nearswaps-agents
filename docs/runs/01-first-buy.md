@@ -2,6 +2,10 @@
 
 Read back from the chain and the kit's ledger after the run; the owner ran the commands by hand in PowerShell.
 
+This run was made on 23 Oct 2026, before the policy had `max_unchecked` and `min_liquidity_near`. A buy now lists
+`check max_unchecked` and `check min_liquidity_near` right after `check score_floor` (for BLACKDRAGON on 27 Oct: one
+finding the check could not make and 13,210 NEAR of liquidity, so both pass); a sell lists both as `skip`.
+
 ## 1. Refused before signing: not enough free NEAR in the wallet for the gas reserve
 
     nearswaps-agent buy blackdragon 0.1 --account tome.near

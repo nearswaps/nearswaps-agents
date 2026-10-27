@@ -50,7 +50,7 @@ function world(policy = {}) {
     },
     http: [
       ["https://nearswaps.com/assets/swap-pools.json", fixture("swap-pools.json")],
-      ["https://nearswaps.com/api/safety", (url) => ({ token: new URL(url).searchParams.get("token"), score: 88, verdict: "nothing dangerous found", checked_at: "2026-11-02T12:00:00Z", findings: [], note: "" })],
+      ["https://nearswaps.com/api/safety", (url) => ({ token: new URL(url).searchParams.get("token"), score: 88, verdict: "nothing dangerous found", checked_at: "2026-11-02T12:00:00Z", findings: [], note: "", facts: { liquidity_near: 5000 } })],
     ],
   });
   return { net, sent, home, policyFile };

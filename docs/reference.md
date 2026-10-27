@@ -58,18 +58,23 @@ one the endpoint returns without that pass.
 |---|---|
 | `paused` | `true` stops every buy and sell; withdrawals still work |
 | `deny` | token ids the agent never buys |
-| `trusted` | token ids whose buys skip the score floor, and only that: the deny list and every other rule still apply. The default is native USDC, USDt and `wrap.near`: native USDC scores 20 ("high risk") today because its issuer keeps keys on the token contract |
+| `trusted` | token ids whose buys skip the three token-check rules (`min_score`, `max_unchecked`, `min_liquidity_near`), and only those: the deny list and every other rule still apply. The default is native USDC, USDt and `wrap.near`: native USDC scores 20 ("high risk") today because its issuer keeps keys on the token contract |
 | `min_score` | the least token-check score (0 to 100) a token needs for a buy |
+| `max_unchecked` | the most findings marked "could not check" the token check may have for a buy (default 3); the blocked result names them |
+| `min_liquidity_near` | the least liquidity in NEAR the token check must find for a buy (its `facts.liquidity_near`; default 100); no figure counts as 0 and the result says so; 0 turns the rule off |
 | `max_trade_near` | the most NEAR one buy may spend |
 | `daily_budget_near` | the most NEAR traded per UTC day: buys count the NEAR spent, sells the NEAR expected back |
 | `cooldown_sec` | seconds after a trade in a token before the next trade in that token |
 | `slippage_bps` | `min_out` is the quote less this (500 = 5%), or `"auto"` for the Terminal's auto slippage |
 
-Every field is required; a missing or unknown field is an error, never a silent default. Checked before every buy
-and sell, in this order: paused; deny list; score floor (a fresh token check, skipped for trusted tokens); per-trade
-maximum; daily budget (from the local ledger `ledger-<account>.json` next to the policy, reset at 00:00 UTC);
+Every field is required; a missing or unknown field is an error, never a silent default, with one exception: a file
+without `max_unchecked` and `min_liquidity_near` (written before 27 Oct 2026, when they were added) loads with their
+defaults and one line on stderr saying so. Checked before every buy and sell, in this order: paused; deny list; score
+floor (a fresh token check, skipped for trusted tokens); unchecked findings and liquidity (from the same token check,
+skipped for trusted tokens); per-trade maximum; daily budget (from the local ledger `ledger-<account>.json` next to the policy, reset at 00:00 UTC);
 cool-down; the contract's own `max_trade_wnear` and pause, read live, so a block by the contract says so. A sell is
-checked for the budget and the cool-down only: selling a bad token is never blocked by its score. Withdrawals and
+checked for the budget and the cool-down only: selling a bad token is never blocked by its score, its unchecked
+findings or its liquidity. Withdrawals and
 `recover_trade` are not trades: the policy doesn't apply to them, and they work while the policy is paused.
 
 ## What the kit returns
@@ -139,7 +144,7 @@ Options: `--account <id>`, `--policy <file>`, `--slippage <bps|auto>`, `--home <
 | `get_balance` | read-only | an account's 1-click balance and NEAR free for gas |
 | `get_pending` | read-only | an account's trades still settling, with the recover time |
 | `get_policy` | read-only | the policy, today's spend (UTC) and what is left |
-| `buy` | moves money, destructive | buys with NEAR from the 1-click balance; blocked by the policy (paused, deny list, score floor unless trusted, per-trade maximum, daily budget, cool-down); pays the 1-click fee |
+| `buy` | moves money, destructive | buys with NEAR from the 1-click balance; blocked by the policy (paused, deny list, score floor, unchecked findings and liquidity unless trusted, per-trade maximum, daily budget, cool-down); pays the 1-click fee |
 | `sell` | moves money, destructive | sells for NEAR into the 1-click balance; blocked only when paused, above the daily budget or inside the cool-down, never by score; pays the 1-click fee |
 | `withdraw` | moves money, destructive | to the owner's own wallet only (no recipient argument); works while the policy is paused |
 | `recover_trade` | moves money to the owner | carries on a trade that stopped part way; only ever credits the owner; outside the policy |

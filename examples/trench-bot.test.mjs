@@ -8,6 +8,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { Agent, Kit, DEFAULT_POLICY, newKeyPair, b58encode } from "@nearswaps/agent";
 import { fakeNet, fixture, tempHome, txOutcome, NEAR } from "../packages/agent/test/helpers.mjs";
 import { MAX_CHECKS, toCheck, pickBuy, pickRefusal, runBot, parseArgs } from "./trench-bot.mjs";
+const POL = { ...DEFAULT_POLICY, trusted: [] };
 
 const USDC = "17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1";
 const NEKO = "ftv2.nekotoken.near";
@@ -53,7 +54,7 @@ function world() {
     },
     http: [
       ["https://nearswaps.com/assets/swap-pools.json", fixture("swap-pools.json")],
-      ["https://nearswaps.com/api/safety", (url) => { const t = new URL(url).searchParams.get("token"); checked.push(t); return { token: t, score: SCORES[t] ?? 20, verdict: (SCORES[t] ?? 20) >= 70 ? "nothing dangerous found" : "high risk", checked_at: "2026-11-02T12:00:00Z", findings: [], note: "" }; }],
+      ["https://nearswaps.com/api/safety", (url) => { const t = new URL(url).searchParams.get("token"); checked.push(t); return { token: t, score: SCORES[t] ?? 20, verdict: (SCORES[t] ?? 20) >= 70 ? "nothing dangerous found" : "high risk", checked_at: "2026-11-02T12:00:00Z", findings: [], note: "", facts: { liquidity_near: 5000 } }; }],
     ],
   });
   return { net, sent, checked, home, policyFile };
@@ -70,10 +71,16 @@ test("which launches get the token check: the chosen first, then the most NEAR i
 });
 
 test("the buy is the best score at the floor or above that 1-click trades; the refusal prefers a tradeable low score", () => {
-  const rows = [{ id: "a", score: 95, tradeable: false }, { id: "b", score: 80, tradeable: true }, { id: "c", score: 72, tradeable: true }, { id: "d", score: 10, tradeable: false }, { id: "e", score: 40, tradeable: true }];
-  assert.equal(pickBuy(rows, 70).id, "b", "95 doesn't trade on Rhea or Intear DEX");
-  assert.equal(pickBuy(rows, 90), null);
-  assert.equal(pickBuy(rows, 70, "d").id, "d", "--token wins");
+  const ok = { unchecked: 0, liquidity_near: 5000 };
+  const rows = [{ id: "a", score: 95, tradeable: false, ...ok }, { id: "b", score: 80, tradeable: true, ...ok }, { id: "c", score: 72, tradeable: true, ...ok }, { id: "d", score: 10, tradeable: false, ...ok }, { id: "e", score: 40, tradeable: true, ...ok }];
+  assert.equal(pickBuy(rows, POL).id, "b", "95 doesn't trade on Rhea or Intear DEX");
+  assert.equal(pickBuy(rows, { ...POL, min_score: 90 }), null);
+  assert.equal(pickBuy(rows, POL, "d").id, "d", "--token wins");
+  // an empty launch scoring 99 is passed over: too many unchecked findings, or too little liquidity
+  assert.equal(pickBuy([{ id: "empty", score: 99, tradeable: true, unchecked: 4, liquidity_near: 5000 }, ...rows], POL).id, "b");
+  assert.equal(pickBuy([{ id: "thin", score: 99, tradeable: true, unchecked: 0, liquidity_near: 0 }, ...rows], POL).id, "b");
+  assert.equal(pickBuy([{ id: "nofig", score: 99, tradeable: true, unchecked: 0, liquidity_near: null }, ...rows], POL).id, "b", "no figure counts as 0");
+  assert.equal(pickBuy([{ id: "usdc.near", score: 20, tradeable: true, unchecked: 9, liquidity_near: 0 }], { ...POL, trusted: ["usdc.near"] }).id, "usdc.near", "trusted skips all three");
   assert.equal(pickRefusal(rows, 70, "b").id, "e", "the lowest the policy, not the venue, will stop");
   assert.equal(pickRefusal(rows.filter((r) => r.id !== "e"), 70, "b").id, "d", "else the lowest of all");
   assert.equal(pickRefusal(rows, 5), null);
@@ -99,7 +106,7 @@ test("a real run: buys the best, the lowest is blocked by the score floor, then 
   assert.ok(lines.includes("check score_floor: fail (score 30 (high risk) is below the floor of 70)"));
   assert.ok(lines.includes("stopped by: score_floor (the policy)"));
   assert.ok(lines.includes("1-click balance: 2 NEAR"));
-  assert.ok(lines.some((l) => l.startsWith(`token: ${USDC} | launchpad intear | age 3h 0m | liquidity 900 NEAR | score 88 |`)));
+  assert.ok(lines.some((l) => l.startsWith(`token: ${USDC} | launchpad intear | age 3h 0m | liquidity 5,000 NEAR | score 88 | unchecked 0 |`)));
   for (const l of lines) { assert.doesNotMatch(l, /\x1b\[|[^\x20-\x7e]/, l); assert.doesNotMatch(l, /\n/); }
 });
 

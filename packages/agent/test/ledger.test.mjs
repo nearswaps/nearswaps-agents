@@ -25,7 +25,7 @@ test("the budget resets at 00:00 UTC; the cool-down carries over", async () => {
   now = Date.parse("2026-11-02T23:59:59.999Z");
   assert.equal(l.spentToday(), 2.5);
   const p = { ...DEFAULT_POLICY, daily_budget_near: 3, cooldown_sec: 600 };
-  const inp = (token, near) => ({ side: "buy", token, near, nearRaw: BigInt(Math.round(near * 1e6)) * 10n ** 18n, score: async () => ({ score: 90, verdict: "nothing dangerous found" }), contract });
+  const inp = (token, near) => ({ side: "buy", token, near, nearRaw: BigInt(Math.round(near * 1e6)) * 10n ** 18n, score: async () => ({ score: 90, verdict: "nothing dangerous found", liquidity_near: 5000 }), contract });
   assert.equal((await runChecks(p, l, inp("b.near", 1), () => now)).blocked.rule, "daily_budget_near");
   now = Date.parse("2026-11-03T00:00:00.000Z");
   assert.equal(l.spentToday(), 0);

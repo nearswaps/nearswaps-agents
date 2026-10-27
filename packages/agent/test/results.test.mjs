@@ -54,7 +54,7 @@ function world(over = {}) {
     },
     http: [
       ["https://nearswaps.com/assets/swap-pools.json", fixture("swap-pools.json")],
-      ["https://nearswaps.com/api/safety", (url) => over.safety ? over.safety(url) : { token: new URL(url).searchParams.get("token"), score: 88, verdict: "nothing dangerous found", checked_at: "2026-11-02T12:00:00Z", findings: [{ id: "keys", check: "keys", severity: "ok", title: "Locked", detail: "" }], note: "" }],
+      ["https://nearswaps.com/api/safety", (url) => over.safety ? over.safety(url) : { token: new URL(url).searchParams.get("token"), score: 88, verdict: "nothing dangerous found", checked_at: "2026-11-02T12:00:00Z", findings: [{ id: "keys", check: "keys", severity: "ok", title: "Locked", detail: "" }], note: "", facts: { liquidity_near: 5000 } }],
     ],
   });
   const open = () => Agent.open({ accountId: "agent-demo.near", key, fetch: net.fetch, home, policyFile, sleep: async () => { clock += 2500; }, now: () => clock });
@@ -73,7 +73,7 @@ test("filled: amounts with symbols, the fee, the score, every check listed", asy
   assert.equal(r.amount_out, "4.923084 USDC");
   assert.equal(r.fee, "0.024739 USDC");
   assert.equal(r.score, 88);
-  assert.deepEqual(r.policy_checks.map((c) => c.rule), ["venue", "balance", "paused", "deny_list", "score_floor", "max_trade_near", "daily_budget_near", "cooldown_sec", "contract_caps"]);
+  assert.deepEqual(r.policy_checks.map((c) => c.rule), ["venue", "balance", "paused", "deny_list", "score_floor", "max_unchecked", "min_liquidity_near", "max_trade_near", "daily_budget_near", "cooldown_sec", "contract_caps"]);
   // What was asked of the contract: a Rhea route of the recorded legs, min_out at 5%, 0 deposit, the gas the view gave.
   assert.equal(w.sent.length, 1);
   const a = w.sent[0];
@@ -216,7 +216,7 @@ test("previewTrade (policy check): the same rules as a trade, nothing signed, th
   const big = await a.previewTrade("buy", "usdc", "5", { policyFile: w.policyFile, account: "agent-demo.near" });
   assert.equal(big.outcome, "blocked");
   assert.equal(big.policy_checks.find((c) => c.status === "fail").rule, "max_trade_near");
-  assert.deepEqual(big.policy_checks.map((c) => c.rule), ["paused", "deny_list", "score_floor", "max_trade_near", "daily_budget_near", "cooldown_sec", "contract_caps"]);
+  assert.deepEqual(big.policy_checks.map((c) => c.rule), ["paused", "deny_list", "score_floor", "max_unchecked", "min_liquidity_near", "max_trade_near", "daily_budget_near", "cooldown_sec", "contract_caps"]);
   const ok = await a.previewTrade("buy", "usdc", "1", { policyFile: w.policyFile });
   assert.equal(ok.outcome, "would pass");
   assert.equal(ok.score, 88);

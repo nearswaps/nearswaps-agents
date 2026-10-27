@@ -17,6 +17,10 @@ export interface TokenCheck {
   verdict: Verdict;
   checked_at: string;
   findings: Finding[];
+  /** How many findings the check could not make (could_not_check): they cost the score nothing. */
+  unchecked: number;
+  /** The NEAR in the token's pools as the check found it (its facts.liquidity_near), or null when it gives none. */
+  liquidity_near: number | null;
   /** True when this answer came from the kit's 60 s cache. */
   cached: boolean;
   /** The token check's own note ("a list of things we checked, not a guarantee"). */
@@ -58,7 +62,9 @@ export class Reads {
     if (!(score >= 0 && score <= 100) || !VERDICTS.includes(j.verdict)) throw new Error("the token check's answer can't be read");
     const findings: Finding[] = (Array.isArray(j.findings) ? j.findings : []).map((f: any) => ({ id: String(f.id || ""), check: String(f.check || ""), severity: String(f.severity || ""),
       title: String(f.title || ""), detail: String(f.detail || ""), ...(f.could_not_check ? { could_not_check: true } : {}) }));
-    const body: TokenCheck = { token: String(j.token || id), score, verdict: j.verdict, checked_at: String(j.checked_at || ""), findings, cached: false, note: String(j.note || ""), lp_browser_pass: "skipped" };
+    const liq = Number(j.facts && j.facts.liquidity_near);
+    const body: TokenCheck = { token: String(j.token || id), score, verdict: j.verdict, checked_at: String(j.checked_at || ""), findings,
+      unchecked: findings.filter((f) => f.could_not_check).length, liquidity_near: j.facts && j.facts.liquidity_near != null && isFinite(liq) ? liq : null, cached: false, note: String(j.note || ""), lp_browser_pass: "skipped" };
     this.checks.set(id, { at: this.now(), body });
     return body;
   }

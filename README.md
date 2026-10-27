@@ -9,7 +9,8 @@ wallet. The nearswaps agent kit gives an agent (Claude Code, Codex, a Python bot
 NEAR function-call key that can call only `trade`, `withdraw` and `recover_trade` on the live 1-click contract
 `nekoorders.near`, working from a 1-click balance that holds funds only you can withdraw. Two layers of limits apply.
 The **hard limits** are on chain, enforced by the contract whatever the agent does. The **policy** is the kit's own
-file next to the agent: a token-check score floor, a per-trade maximum, a daily budget, a deny list and a cool-down.
+file next to the agent: a token-check score floor (with two rules beside it: not too many findings the check could
+not make, not too little liquidity), a per-trade maximum, a daily budget, a deny list and a cool-down.
 The kit is a Node SDK (`@nearswaps/agent`), an MCP server (`@nearswaps/agent-mcp`) and a CLI. Every agent trade pays
 the normal 1-click fee.
 
@@ -177,6 +178,8 @@ NEAR in the 1-click balance).
     "wrap.near"
   ],
   "min_score": 70,
+  "max_unchecked": 3,
+  "min_liquidity_near": 100,
   "max_trade_near": 1,
   "daily_budget_near": 3,
   "cooldown_sec": 600,
@@ -188,16 +191,24 @@ NEAR in the 1-click balance).
 |---|---|
 | `paused` | `true` stops every buy and sell; withdrawals still work |
 | `deny` | token ids the agent never buys |
-| `trusted` | token ids whose buys skip the score floor, and only that: the deny list and every other rule still apply |
+| `trusted` | token ids whose buys skip the three token-check rules (`min_score`, `max_unchecked`, `min_liquidity_near`), and only those: the deny list and every other rule still apply |
 | `min_score` | the least token-check score (0 to 100) a token needs for a buy |
+| `max_unchecked` | the most "could not check" findings the token check may have for a buy. A check the server couldn't make costs the score nothing, so an empty launch can score 80; on 27 Oct three Nearly launches with 0 NEAR of liquidity did |
+| `min_liquidity_near` | the least liquidity, in NEAR, the token check must find for a buy; no figure counts as 0, and the result says so. 0 turns the rule off |
 | `max_trade_near` | the most NEAR one buy may spend |
 | `daily_budget_near` | the most NEAR traded per UTC day |
 | `cooldown_sec` | seconds after a trade in a token before the next trade in that token |
 | `slippage_bps` | `min_out` is the quote less this (500 = 5%), or `"auto"` |
 
-Every field is required; a missing or unknown field is an error, never a silent default. The order the rules run in is
-in [docs/reference.md](docs/reference.md). `nearswaps-agent policy check buy <token> <near>` is a dry run: each rule,
+Every field is required; a missing or unknown field is an error, never a silent default. The one exception: a file
+written before `max_unchecked` and `min_liquidity_near` existed (27 Oct 2026) still loads, takes their defaults (3
+and 100) and says so in one line on stderr; add the two fields to choose. The order the rules run in is in
+[docs/reference.md](docs/reference.md). `nearswaps-agent policy check buy <token> <near>` is a dry run: each rule,
 pass or fail, nothing signed.
+
+These runs were made on 23 Oct 2026, before the policy had `max_unchecked` and `min_liquidity_near`. A buy now lists
+`check max_unchecked` and `check min_liquidity_near` right after `check score_floor` (for BLACKDRAGON on 27 Oct: one
+finding the check could not make and 13,210 NEAR of liquidity, so both pass); a sell lists both as `skip`.
 
 **Step 5. The first buy: a refusal, before anything is signed.** The owner ran this with 0.194709 NEAR free in the
 wallet itself. Each trade reserves gas there for a few seconds, so the kit stopped, listed every check, and signed
@@ -309,15 +320,17 @@ with the example policy (trimmed where marked):
 mode: dry run (no key loaded; nothing signed)
 policy: ~/.nearswaps-agent/policy.json
 score floor: 70
+most unchecked findings: 3
+least liquidity: 100 NEAR
 per-trade maximum: 1 NEAR
 amount per buy: 0.2 NEAR
-launches in the last 1440 minutes: 40
+launches in the last 1440 minutes: 26
 token checks this run: 10 (at most 10)
-token: blackdragon.tkn.near | launchpad chosen | age chosen | liquidity n/a | score 80 | verdict caution | 1-click yes
-token: token.intear.near | launchpad chosen | age chosen | liquidity n/a | score 50 | verdict caution | 1-click yes
-token: nearvember.nearlytrade.near | launchpad nearly | age 16h 24m | liquidity 94.91 NEAR | score 60 | verdict caution | 1-click no
-token: nateriver.nearlytrade.near | launchpad nearly | age 13h 7m | liquidity 38.17 NEAR | score 40 | verdict high risk | 1-click no
-(six more Nearly rows, scores 20, 1-click no)
+token: blackdragon.tkn.near | launchpad chosen | age chosen | liquidity 13,210.2 NEAR | score 80 | unchecked 1 | verdict caution | 1-click yes
+token: token.intear.near | launchpad chosen | age chosen | liquidity 15,033.33 NEAR | score 50 | unchecked 0 | verdict caution | 1-click yes
+token: eaglewolf4.nearlytrade.near | launchpad nearly | age 2h 8m | liquidity 16.51 NEAR | score 20 | unchecked 2 | verdict high risk | 1-click no
+token: drita.nearlytrade.near | launchpad nearly | age 7h 56m | liquidity 6.72 NEAR | score 20 | unchecked 2 | verdict high risk | 1-click no
+(6 more Nearly rows, 1-click no)
 buy: blackdragon.tkn.near (score 80)
 side: buy
 token: blackdragon.tkn.near
@@ -329,6 +342,8 @@ signed: nothing (a dry run)
 check paused: pass (the policy is not paused)
 check deny_list: pass (not on the deny list)
 check score_floor: pass (score 80 (caution) meets the floor of 70)
+check max_unchecked: pass (1 "could not check" finding, within the most of 3: who holds the rest of the LP)
+check min_liquidity_near: pass (13210.2 NEAR of liquidity, at or above the least of 100 NEAR)
 check max_trade_near: pass (0.2 NEAR is within the per-trade maximum of 1 NEAR)
 check daily_budget_near: pass (0 NEAR traded today (UTC); 0.2 NEAR with this trade, within 3 NEAR)
 check cooldown_sec: pass (no earlier trade in blackdragon.tkn.near)
@@ -344,11 +359,12 @@ signed: nothing (a dry run)
 check paused: pass (the policy is not paused)
 check deny_list: pass (not on the deny list)
 check score_floor: fail (score 50 (caution) is below the floor of 70)
-(the four rules after it: skip, an earlier rule blocked the trade)
+(the 6 rules after it: skip, an earlier rule blocked the trade)
 stopped by: score_floor (the policy)
 account: tome.near
 1-click balance: 22,028,439.14523 BLACKDRAGON
-wallet free for gas: 1.762108 NEAR
+1-click balance: 0.5 NEAR
+wallet free for gas: 1.261246 NEAR
 ```
 
 ## What the key can and cannot do
@@ -377,6 +393,8 @@ design since v1.6); the 1-click fee per trade as in the Terminal. Agent trades e
 | Hard limits (the contract, on chain) | Policy (the kit, where the agent runs) |
 |---|---|
 | The agent key calls `trade`, `withdraw` and `recover_trade` on `nekoorders.near`, nothing else | Score floor from the token check, with a trusted list |
+| | At most `max_unchecked` "could not check" findings in the token check |
+| | At least `min_liquidity_near` NEAR of liquidity in the token check |
 | `withdraw` pays the owner only; there is no recipient argument; `recover_trade` only ever credits the owner | Per-trade maximum in NEAR |
 | Trades only through pools and venues the contract allows, against tokens switched on for 1-click | Daily budget per UTC day |
 | `max_trade_wnear` per trade, `max_trading_wnear` per 1-click balance | Deny list |

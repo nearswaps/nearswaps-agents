@@ -53,11 +53,17 @@ export function toCheck(launches, chosen = [], max = MAX_CHECKS) {
   return out;
 }
 
-/** The buy: the forced token if given, else the highest score at or above the floor that 1-click trades on Rhea or
- * Intear DEX (the kit's venues). Rows carry { id, score, tradeable }. */
-export function pickBuy(rows, minScore, forced = null) {
+/** Whether a row meets the policy's three token-check rules (score floor, unchecked findings, liquidity), as the policy
+ * runs them: a trusted token skips all three, a missing liquidity figure counts as 0. */
+export const meetsChecks = (r, policy) => (policy.trusted || []).includes(r.id)
+  || (r.score != null && r.score >= policy.min_score && (r.unchecked ?? 0) <= policy.max_unchecked && (r.liquidity_near ?? 0) >= policy.min_liquidity_near);
+
+/** The buy: the forced token if given, else the highest score among the tokens that meet the token-check rules and
+ * that 1-click trades on Rhea or Intear DEX (the kit's venues). Rows carry { id, score, unchecked, liquidity_near,
+ * tradeable }; `policy` is the policy file's. */
+export function pickBuy(rows, policy, forced = null) {
   if (forced) return rows.find((r) => r.id === forced) || null;
-  return rows.filter((r) => r.tradeable && r.score != null && r.score >= minScore).sort((a, b) => b.score - a.score)[0] || null;
+  return rows.filter((r) => r.tradeable && r.score != null && meetsChecks(r, policy)).sort((a, b) => b.score - a.score)[0] || null;
 }
 
 /** The refusal: the lowest score below the floor, preferring a token the kit can trade, so that the policy (not the
@@ -85,6 +91,8 @@ export async function runBot({ kit, agent = null, policyFile, account = null, si
   out(`mode: ${dry ? "dry run (no key loaded; nothing signed)" : `trading for ${agent.accountId} with the agent key`}`);
   out(`policy: ${policyFile}`);
   out(`score floor: ${policy.min_score}`);
+  out(`most unchecked findings: ${policy.max_unchecked}`);
+  out(`least liquidity: ${policy.min_liquidity_near} NEAR`);
   out(`per-trade maximum: ${policy.max_trade_near} NEAR`);
   out(`amount per buy: ${amount} NEAR`);
 
@@ -99,15 +107,16 @@ export async function runBot({ kit, agent = null, policyFile, account = null, si
   out(`token checks this run: ${picked.length} (at most ${MAX_CHECKS})`);
   const rows = [];
   for (const l of picked) {
-    let score = null, verdict = "token check failed";
-    try { const c = await kit.checkToken(l.id); score = c.score; verdict = c.verdict; } catch (e) { verdict = `token check failed (${String(e.message || e).slice(0, 60)})`; }
+    let score = null, verdict = "token check failed", unchecked = null, liquidity_near = null;
+    try { const c = await kit.checkToken(l.id); score = c.score; verdict = c.verdict; unchecked = c.unchecked; liquidity_near = c.liquidity_near; } catch (e) { verdict = `token check failed (${String(e.message || e).slice(0, 60)})`; }
     let tradeable = false;
     try { const m = await kit.market(l.id); tradeable = RHEA_OR_INTEAR.has(m.venueOf(l.id)); } catch (e) { /* not tradeable as far as we know */ }
-    rows.push({ id: l.id, pad: l.pad, age: l.forced ? "chosen" : age(l.created, now()), liquidity: l.forced ? "n/a" : liq(l.liquidity_near), score, verdict, tradeable });
+    // Liquidity as the token check found it (what the policy uses); the launch feed's figure when the check gave none.
+    rows.push({ id: l.id, pad: l.pad, age: l.forced ? "chosen" : age(l.created, now()), liquidity: liq(liquidity_near ?? l.liquidity_near), score, verdict, unchecked, liquidity_near, tradeable });
   }
 
   // 3. One line per token.
-  for (const x of rows) out(`token: ${x.id} | launchpad ${x.pad} | age ${x.age} | liquidity ${x.liquidity} | score ${x.score ?? "none"} | verdict ${x.verdict} | 1-click ${x.tradeable ? "yes" : "no"}`);
+  for (const x of rows) out(`token: ${x.id} | launchpad ${x.pad} | age ${x.age} | liquidity ${x.liquidity} | score ${x.score ?? "none"} | unchecked ${x.unchecked ?? "none"} | verdict ${x.verdict} | 1-click ${x.tradeable ? "yes" : "no"}`);
 
   const attempt = async (row, label) => {
     out(`${label}: ${row.id} (score ${row.score ?? "none"})`);
@@ -125,10 +134,10 @@ export async function runBot({ kit, agent = null, policyFile, account = null, si
   const stopRule = (res) => (res.policy_checks || []).find((c) => c.status === "fail");
 
   // 4. The buy.
-  const buy = pickBuy(rows, policy.min_score, forced);
+  const buy = pickBuy(rows, policy, forced);
   let buyResult = null;
   if (buy) buyResult = await attempt(buy, "buy");
-  else out(`buy: none (no token checked this run scores ${policy.min_score} or more and trades on Rhea or Intear DEX)`);
+  else out(`buy: none (no token checked this run meets the score floor of ${policy.min_score}, at most ${policy.max_unchecked} unchecked findings and ${policy.min_liquidity_near} NEAR of liquidity, and trades on Rhea or Intear DEX)`);
 
   // 5. The refusal, shown on purpose: the lowest score, at the same amount.
   const refusal = pickRefusal(rows, policy.min_score, buy ? buy.id : null, forcedRefusal);
