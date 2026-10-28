@@ -23,7 +23,7 @@ Install (Node 18 or later; the SDK has no runtime dependencies, the MCP server a
 `@modelcontextprotocol/sdk` and `zod`). The packages are not on npm yet, so run them from this repository:
 
 ```bash
-git clone https://github.com/<org>/nearswaps-agents
+git clone https://github.com/nearswaps/nearswaps-agents
 cd nearswaps-agents
 npm install
 npm run build
@@ -509,7 +509,7 @@ agent with shell access can edit it, which is why the hard limits are the ones t
   one at a time, so two at once can't pass the daily budget twice or share a nonce.
 - **The MCP server** puts `readOnlyHint` on the read tools and `destructiveHint` on `buy`, `sell` and `withdraw`;
   `--read-only` loads no key and registers no money tool.
-- **Tests**: `npm test` runs 91 offline tests from recorded fixtures; `npm run smoke` is live and read-only (CI runs it).
+- **Tests**: `npm test` runs 109 offline tests from recorded fixtures; `npm run smoke` is live and read-only (CI runs it).
 
 ## Built for NEAR HACKATHON 2026
 
