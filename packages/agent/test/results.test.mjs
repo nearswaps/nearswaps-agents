@@ -73,7 +73,8 @@ test("filled: amounts with symbols, the fee, the score, every check listed", asy
   assert.equal(r.amount_out, "4.923084 USDC");
   assert.equal(r.fee, "0.024739 USDC");
   assert.equal(r.score, 88);
-  assert.deepEqual(r.policy_checks.map((c) => c.rule), ["venue", "balance", "paused", "deny_list", "score_floor", "max_unchecked", "min_liquidity_near", "max_trade_near", "daily_budget_near", "cooldown_sec", "contract_caps"]);
+  // a buy: the venue, then the policy, then the balance (in the order they ran)
+  assert.deepEqual(r.policy_checks.map((c) => c.rule), ["venue", "paused", "deny_list", "score_floor", "max_unchecked", "min_liquidity_near", "max_trade_near", "daily_budget_near", "cooldown_sec", "contract_caps", "balance"]);
   // What was asked of the contract: a Rhea route of the recorded legs, min_out at 5%, 0 deposit, the gas the view gave.
   assert.equal(w.sent.length, 1);
   const a = w.sent[0];
@@ -115,6 +116,34 @@ test("pending: sent, no answer from any node for two minutes; the hash is given 
   assert.equal((await w.open()).getPolicy().spent_today_near, 1, "a pending trade counts");
 });
 
+test("a buy the policy forbids is blocked by the policy's rule even when the balance is short too", async () => {
+  // As on 28 Oct: 0.2 NEAR of a token scoring 50 (floor 70) with 0.1 NEAR in the 1-click balance.
+  const w = world({ balances: { "wrap.near": { here: NEAR / 10n, rhea: 0n, intear: 0n } }, safety: (url) => ({ token: new URL(url).searchParams.get("token"), score: 50, verdict: "caution", checked_at: "x", findings: [], note: "", facts: { liquidity_near: 5000 } }) });
+  const r = await (await w.open()).buy("usdc", "0.2");
+  assert.equal(r.outcome, "blocked");
+  assert.equal(r.reason, "score 50 (caution) is below the floor of 70");
+  assert.equal(r.policy_checks.find((c) => c.status === "fail").rule, "score_floor");
+  assert.equal(r.policy_checks.some((c) => c.rule === "balance"), false, "the balance check never ran");
+  assert.equal(r.score, 50);
+  assert.equal(w.sent.length, 0);
+  // a policy that allows it: now the short balance is what stops it
+  const w2 = world({ balances: { "wrap.near": { here: NEAR / 10n, rhea: 0n, intear: 0n } } });
+  const r2 = await (await w2.open()).buy("usdc", "0.2");
+  assert.equal(r2.policy_checks.at(-1).rule, "balance");
+  assert.match(r2.reason, /the 1-click balance has 0.1 NEAR/);
+});
+
+test("a sell keeps its order: the balance and the quote first, then the policy", async () => {
+  const w = world({ policy: { daily_budget_near: 10 }, send: () => txOutcome("S", [tradeEv({ token_in: USDC, token_out: "wrap.near", amount_in: "10000000", amount_out: "2000000000000000000000000", fee_amount: "10000000000000000000000" })]) });
+  const r = await (await w.open()).sell("usdc", "10");
+  assert.equal(r.outcome, "filled");
+  assert.deepEqual(r.policy_checks.map((c) => c.rule).slice(0, 3), ["venue", "balance", "paused"]);
+  // a sell above the balance is still the balance's to stop, before any policy rule runs
+  const short = await (await w.open()).sell("usdc", "60");
+  assert.equal(short.policy_checks.at(-1).rule, "balance");
+  assert.equal(short.policy_checks.some((c) => c.rule === "paused"), false);
+});
+
 test("blocked by policy: below the score floor, with the finding's score; nothing signed", async () => {
   const w = world({ safety: (url) => ({ token: new URL(url).searchParams.get("token"), score: 41, verdict: "high risk", checked_at: "x", findings: [], note: "" }) });
   const r = await (await w.open()).buy("usdc", "1");
@@ -137,10 +166,11 @@ test("blocked by policy: above the per-trade maximum and the daily budget", asyn
 });
 
 test("blocked by the kit's own checks: not enough in the 1-click balance, no policy file, an unknown token", async () => {
-  const w = world();
+  const w = world({ policy: { max_trade_near: 5 } });
   const r = await (await w.open()).buy("usdc", "3");
   assert.equal(r.outcome, "blocked");
   assert.equal(r.policy_checks.at(-1).rule, "balance");
+  assert.ok(r.policy_checks.filter((c) => c.rule !== "balance").every((c) => c.status === "pass"), "the policy ran first, and passed");
   assert.match(r.reason, /the 1-click balance has 2 NEAR/);
   const w2 = world({ policy: null });
   const r2 = await (await w2.open()).buy("usdc", "1");

@@ -74,7 +74,9 @@ floor (a fresh token check, skipped for trusted tokens); unchecked findings and 
 skipped for trusted tokens); per-trade maximum; daily budget (from the local ledger `ledger-<account>.json` next to the policy, reset at 00:00 UTC);
 cool-down; the contract's own `max_trade_wnear` and pause, read live, so a block by the contract says so. A sell is
 checked for the budget and the cool-down only: selling a bad token is never blocked by its score, its unchecked
-findings or its liquidity. Withdrawals and
+findings or its liquidity. Around the policy sit the kit's own checks: a buy checks the venue, then runs the policy,
+then checks the 1-click balance, so a token the policy forbids is reported by the policy's rule even when the balance
+is short too; a sell checks the venue and the balance and gets a quote (its NEAR value) before the policy. Withdrawals and
 `recover_trade` are not trades: the policy doesn't apply to them, and they work while the policy is paused.
 
 ## What the kit returns

@@ -376,20 +376,26 @@ export class Agent extends Kit {
         else raw = toRaw(a, mIn.decimals);
       }
       if (!raw || raw <= 0n) return blockedBy(kitCheck("amount", false, side === "buy" ? `"${amountArg}" is not a NEAR amount` : `"${amountArg}" is not an amount of ${mIn.symbol}, a percent or "all"`));
+      // The policy, in order. A buy runs it before the balance check, so a token the policy forbids is always reported
+      // by the policy's rule, even when the balance is short too. A sell runs it after the balance and the quote, which
+      // give the amount and its NEAR value.
+      const runPolicy = async (nearRaw: bigint): Promise<MoneyResult | null> => {
+        const run = await runChecks(policy, ledger!, { side, token, near: Number(units(nearRaw, 24)), nearRaw, score: () => this.reads.checkToken(token),
+          contract: { paused: cfg.paused, trade_paused: cfg.trade_paused, max_trade_wnear: BigInt(cfg.max_trade_wnear || "0"), max_trading_wnear: BigInt(cfg.max_trading_wnear || "0") } }, this.now);
+        score = run.score;
+        checks.push(...run.checks);
+        return run.blocked ? result("blocked", run.blocked.detail, { policy_checks: checks, score }) : null;
+      };
+      if (side === "buy") { const stop = await runPolicy(raw); if (stop) return stop; }
       if (raw > bal) return blockedBy(kitCheck("balance", false, `the 1-click balance has ${amountText(bal, mIn.decimals, mIn.symbol)}; deposit more in the Terminal first`));
       checks.push(kitCheck("balance", true, `${amountText(bal, mIn.decimals, mIn.symbol)} in the 1-click balance`));
       // A first quote: a sell's NEAR value for the budget, and whether there is a route at all.
       const deps = { rpc: this.rpc, fetch: this.fetchFn, pools: this.pools };
       let q: Quote | null = await quote(deps, market, tIn, tOut, raw, venueName);
-      if (!q) return result("refused", venueName === "intear" ? `Intear's router has no single route 1-click can use for ${token} right now; nothing was sent` : `no route through the pools 1-click can use for ${token}; nothing was sent`, { policy_checks: checks });
+      if (!q) return result("refused", venueName === "intear" ? `Intear's router has no single route 1-click can use for ${token} right now; nothing was sent` : `no route through the pools 1-click can use for ${token}; nothing was sent`, { policy_checks: checks, score });
       const nearRaw = side === "buy" ? raw : q.out;
       const near = Number(units(nearRaw, 24));
-      // The policy, in order.
-      const run = await runChecks(policy, ledger, { side, token, near, nearRaw, score: () => this.reads.checkToken(token),
-        contract: { paused: cfg.paused, trade_paused: cfg.trade_paused, max_trade_wnear: BigInt(cfg.max_trade_wnear || "0"), max_trading_wnear: BigInt(cfg.max_trading_wnear || "0") } }, this.now);
-      score = run.score;
-      checks.push(...run.checks);
-      if (run.blocked) return result("blocked", run.blocked.detail, { policy_checks: checks, score });
+      if (side === "sell") { const stop = await runPolicy(nearRaw); if (stop) return stop; }
       if (this.discount == null) this.discount = await this.views.feeDiscountBps(this.accountId);
       const amountIn = amountText(raw, mIn.decimals, mIn.symbol);
       // From here the trade may go out: it counts against the budget until it is known not to have.
