@@ -532,6 +532,27 @@ curl -s -X POST https://free.rpc.fastnear.com -H 'content-type: application/json
 
 or open [nekoorders.near on NearBlocks](https://nearblocks.io/address/nekoorders.near).
 
+## Hackathon scope, libraries and how it was built
+
+Every commit in this repository was made after the hackathon announcement of 19 Oct 2026 (first commit 22 Oct),
+so the whole repository is in-window work; the tag `hackathon-submission` marks the submitted state. The baseline
+it builds on is outside this repository: the `nekoorders.near` contract, nearswaps.com and its backend. Diff of all
+in-window work: https://github.com/nearswaps/nearswaps-agents/compare/13f3e8d681ed...hackathon-submission
+
+NEAR integration built in the window: the function-call agent key (trade, withdraw, recover_trade on
+`nekoorders.near`), the policy engine, the MCP server, the scripted and prompt-driven agents, and the
+nearswaps.com/agents page. Partner protocols used: NEAR AI Cloud (inference, attested models in TEEs), Rhea and
+Intear DEX (the venues the contract trades on), the NEAR RPC (FastNEAR, drpc), NearBlocks (the activity log).
+
+Libraries: `@modelcontextprotocol/sdk` (the MCP server); `typescript` and `@types/node` (build only).
+`@nearswaps/agent` has no runtime dependencies; `near-api-js` 5.1.1 is used only in a test to generate the signing
+vectors the codec is checked against. The video was cut with Remotion. No templates or starter kits were used.
+
+AI-generated code: this kit was written with Claude (Anthropic): Claude Opus 5.5 sessions wrote the code, tests and
+docs from a written spec, and Claude Fable 5.1 reviewed the money path and ran the verification. The owner ran every
+transaction, deployment and post by hand. The contract and site it builds on were also written with Claude, before
+the hackathon. No other project is being submitted by this team.
+
 ## Licence
 
 MIT for the kit in this repository (see [LICENSE](LICENSE)). The contract's source is not in this repository: its code is
