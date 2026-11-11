@@ -551,7 +551,8 @@ vectors the codec is checked against. The video was cut with Remotion. No templa
 AI-generated code: this kit was written with Claude (Anthropic): Claude Opus 5.5 sessions wrote the code, tests and
 docs from a written spec, and Claude Fable 5.1 reviewed the money path and ran the verification. The owner ran every
 transaction, deployment and post by hand. The contract and site it builds on were also written with Claude, before
-the hackathon. No other project is being submitted by this team.
+the hackathon. The team submits one other, independent project: nearswaps checkout, one script tag that takes crypto
+payments from any wallet on any chain through NEAR Intents, at https://github.com/nearswaps/nearswaps-checkout.
 
 ## Licence
 
